@@ -1,61 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="height=device-height, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, height=device-height">
+
+<title>Hide URL Bar Without Scroll</title>
+
 <style>
-html,body{margin:0;height:100%}
-
-/* ===== YOUR MAIN CONTENT ===== */
-#content{
-  position:fixed;
-  inset:0;
-  display:grid;
-  place-items:center;
-  background:#000;
-  color:#fff;
-  font-size:22px;
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: auto;
+    background: #000;
 }
 
-/* ===== FAKE SCROLL SPACE (URL BAR HIDE) ===== */
-#scroll-space{height:150vh}
-
-/* ===== LANDSCAPE BLOCK (PHONES ONLY) ===== */
-#lock{
-  position:fixed;
-  inset:0;
-  background:#000;
-  color:#fff;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  text-align:center;
-  z-index:9999;
+#content {
+    position: fixed; /* 👈 content fixed */
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
 }
 
-@media (max-width:768px) and (orientation:landscape){
-  #lock{display:flex}
+/* invisible scroll area */
+#scroll-space {
+    height: 150vh;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Landscape block screen -->
-<div id="lock">Please rotate your phone 📱</div>
+<div id="content">
+    URL bar will hide without visible scroll
+</div>
 
-<!-- Main content -->
-<div id="content">Test Area</div>
-
-<!-- Invisible scroll area -->
 <div id="scroll-space"></div>
 
 <script>
-/* ===== URL BAR HIDE (COMMENT TO DISABLE) ===== */
-addEventListener("load",()=>{
-  setTimeout(()=>scrollTo(0,1),50);
+window.addEventListener("load", () => {
+    setTimeout(() => {
+        window.scrollTo(0, 1); // triggers URL bar hide
+    }, 100);
 });
-
-/* ===== NOTHING ELSE NEEDED ===== */
 </script>
 
 </body>
