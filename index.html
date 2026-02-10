@@ -3,31 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-<title>Hide URL Bar</title>
+      content="width=device-width, initial-scale=1.0, height=device-height">
+
+<title>Hide URL Bar Without Scroll</title>
 
 <style>
 html, body {
     margin: 0;
-    height: 200vh; /* scroll possible hona zaroori */
+    padding: 0;
+    height: 100%;
+    overflow: auto;
     background: #000;
+}
+
+#content {
+    position: fixed; /* 👈 content fixed */
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: white;
-    font-family: sans-serif;
+    font-size: 24px;
+}
+
+/* invisible scroll area */
+#scroll-space {
+    height: 150vh;
 }
 </style>
 </head>
 
 <body>
 
-<h1>URL bar will hide</h1>
+<div id="content">
+    URL bar will hide without visible scroll
+</div>
+
+<div id="scroll-space"></div>
 
 <script>
-function hideURLbar() {
-    window.scrollTo(0, 1);
-}
-
 window.addEventListener("load", () => {
-    setTimeout(hideURLbar, 100);
+    setTimeout(() => {
+        window.scrollTo(0, 1); // triggers URL bar hide
+    }, 100);
 });
 </script>
 
