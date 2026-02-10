@@ -2,33 +2,34 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="manifest.json">
-<title>Fullscreen App</title>
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+<title>Hide URL Bar</title>
 
 <style>
 html, body {
     margin: 0;
-    height: 100%;
-    background: black;
+    height: 200vh; /* scroll possible hona zaroori */
+    background: #000;
     color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     font-family: sans-serif;
 }
 </style>
 </head>
 
 <body>
-<h1>Swipe or Tap Anywhere</h1>
+
+<h1>URL bar will hide</h1>
 
 <script>
-document.body.addEventListener("click", () => {
-    if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-    }
+function hideURLbar() {
+    window.scrollTo(0, 1);
+}
+
+window.addEventListener("load", () => {
+    setTimeout(hideURLbar, 100);
 });
 </script>
+
 </body>
 </html>
