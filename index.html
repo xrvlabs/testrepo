@@ -1,52 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, height=device-height">
-
-<title>Hide URL Bar Without Scroll</title>
-
-<style>
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    overflow: auto;
-    background: #000;
-}
-
-#content {
-    position: fixed; /* 👈 content fixed */
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 24px;
-}
-
-/* invisible scroll area */
-#scroll-space {
-    height: 150vh;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Payment - XRV LABS</title>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-database-compat.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        input { width: 90%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
+        button { width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        button:disabled { background: #ccc; }
+        #status { margin-top: 15px; font-weight: bold; }
+        .success { color: #2e7d32; }
+        .error { color: #d32f2f; }
+    </style>
 </head>
-
 <body>
 
-<div id="content">
-    URL bar will hide without visible scroll
+<div class="card">
+    <h2>Verify Payment</h2>
+    <p>Enter the 12-digit UTR/Ref number from your payment confirmation.</p>
+    <input type="text" id="utrInput" placeholder="e.g. 123456789012" maxlength="12">
+    <button id="verifyBtn">Unlock Product</button>
+    <div id="status"></div>
 </div>
 
-<div id="scroll-space"></div>
-
 <script>
-window.addEventListener("load", () => {
-    setTimeout(() => {
-        window.scrollTo(0, 1); // triggers URL bar hide
-    }, 100);
-});
+    // TODO: Replace with your actual Firebase config from Firebase Console
+    const firebaseConfig = {
+        apiKey: "AIzaSyDhRo9prltIjJPTlf1FP_Z5Zat7AWHdjzw",
+        authDomain: "xrv-labs-workspace.firebaseapp.com",
+        databaseURL: "https://xrv-labs-workspace-default-rtdb.firebaseio.com",
+        projectId: "xrv-labs-workspace",
+        storageBucket: "xrv-labs-workspace.appspot.com",
+        messagingSenderId: "430335532805",
+        appId: "1:430335532805:web:..."
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const utrInput = document.getElementById('utrInput');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const status = document.getElementById('status');
+
+    verifyBtn.onclick = async () => {
+        const utr = utrInput.value.trim();
+        if (utr.length !== 12) {
+            status.innerHTML = "<span class='error'>Please enter a valid 12-digit UTR.</span>";
+            return;
+        }
+
+        status.innerText = "Verifying...";
+        verifyBtn.disabled = true;
+
+        // Path: received_payments/UTR_NUMBER
+        const paymentRef = db.ref('received_payments/' + utr);
+
+        paymentRef.once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                
+                if (data.isUsed) {
+                    status.innerHTML = "<span class='error'>This UTR has already been used.</span>";
+                    verifyBtn.disabled = false;
+                } else {
+                    // SUCCESS! Mark it as used so no one else uses it
+                    paymentRef.update({ isUsed: true, usedAt: Date.now() });
+                    
+                    status.innerHTML = "<span class='success'>Payment Verified! Unlocking your product...</span>";
+                    
+                    // Yahan apna product access logic likho
+                    setTimeout(() => {
+                        window.location.href = "YOUR_DOWNLOAD_OR_ACCESS_LINK";
+                    }, 2000);
+                }
+            } else {
+                status.innerHTML = "<span class='error'>Payment not found. If you just paid, please wait 30 seconds and try again.</span>";
+                verifyBtn.disabled = false;
+            }
+        });
+    };
 </script>
 
 </body>
