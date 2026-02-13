@@ -3,119 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Payment - XRV LABS</title>
+    <title>XRV Secure Verify</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
-        .card { background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); width: 100%; max-width: 380px; text-align: center; }
-        h2 { color: #1a1a1a; margin-bottom: 0.5rem; }
-        p { color: #666; font-size: 14px; margin-bottom: 1.5rem; }
-        input { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #eee; border-radius: 8px; font-size: 16px; box-sizing: border-box; transition: border 0.3s; }
-        input:focus { border-color: #4CAF50; outline: none; }
-        button { width: 100%; padding: 14px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; transition: background 0.3s; }
-        button:hover { background: #43a047; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-        #status { margin-top: 20px; font-size: 14px; min-height: 20px; }
-        .success { color: #2e7d32; padding: 10px; background: #e8f5e9; border-radius: 6px; }
-        .error { color: #d32f2f; padding: 10px; background: #ffebee; border-radius: 6px; }
+        body { font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #0f172a; color: white; margin: 0; }
+        .card { background: #1e293b; padding: 2.5rem; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #334155; }
+        .timer-box { font-size: 24px; font-weight: bold; color: #fbbf24; margin: 15px 0; background: #334155; padding: 10px; border-radius: 10px; }
+        input { width: 100%; padding: 14px; margin: 15px 0; border: 2px solid #334155; border-radius: 10px; background: #0f172a; color: white; font-size: 18px; text-align: center; box-sizing: border-box; }
+        button { width: 100%; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
+        button:hover { background: #2563eb; }
+        button:disabled { background: #64748b; cursor: not-allowed; }
+        #status { margin-top: 20px; min-height: 20px; font-size: 14px; }
+        .error { color: #f87171; } .success { color: #4ade80; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <h2>Verify Payment</h2>
-    <p>Enter the 12-digit UTR/Reference number from your bank SMS/App.</p>
-    <input type="number" id="utrInput" placeholder="Enter 12 Digit UTR" oninput="if(this.value.length > 12) this.value = this.value.slice(0, 12);">
+    <p>Session expires in:</p>
+    <div class="timer-box" id="timer">05:00</div>
+    
+    <input type="number" id="utrInput" placeholder="Enter 12 Digit UTR">
     <button id="verifyBtn">Unlock Product</button>
     <div id="status"></div>
 </div>
 
 <script>
-    // --- 1. CONFIGURATION ---
     const firebaseConfig = {
+        apiKey: "AIzaSyDhRo9prltIjJPTlf1FP_Z5Zat7AWHdjzw",
+        authDomain: "xrv-labs-workspace.firebaseapp.com",
+        databaseURL: "https://xrv-labs-workspace-default-rtdb.firebaseio.com",
+        projectId: "xrv-labs-workspace",
+        storageBucket: "xrv-labs-workspace.appspot.com",
+        messagingSenderId: "430335532805",
+        appId: "YOUR_WEB_APP_ID"
+    };
 
-    apiKey: "AIzaSyB2-uJWrSxiMK_-gR2oBHMHtLuwkxFzEVY",
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    authDomain: "xrv-labs-workspace.firebaseapp.com",
+    // --- Timer Logic ---
+    let timeLeft = 300; // 5 minutes
+    const timerDisplay = document.getElementById('timer');
+    
+    const countdown = setInterval(() => {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        timerDisplay.innerHTML = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            document.getElementById('verifyBtn').disabled = true;
+            document.getElementById('status').innerHTML = "<span class='error'>Session Expired! Please refresh.</span>";
+        }
+        timeLeft--;
+    }, 1000);
 
-    databaseURL: "https://xrv-labs-workspace-default-rtdb.firebaseio.com",
-
-    projectId: "xrv-labs-workspace",
-
-    storageBucket: "xrv-labs-workspace.firebasestorage.app",
-
-    messagingSenderId: "430335532805",
-
-    appId: "1:430335532805:web:8b2be5a551e686bf13e16c"
-
-  };
-
-
-    // --- 2. INITIALIZATION ---
-    try {
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        console.log("Firebase Initialized Successfully");
-    } catch (e) {
-        console.error("Firebase Initialization Error:", e);
-    }
-
-    const utrInput = document.getElementById('utrInput');
-    const verifyBtn = document.getElementById('verifyBtn');
-    const statusDiv = document.getElementById('status');
-
-    // --- 3. VERIFICATION LOGIC ---
-    verifyBtn.onclick = async () => {
-        const utr = utrInput.value.trim();
+    // --- Verification Logic ---
+    document.getElementById('verifyBtn').onclick = function() {
+        const utr = document.getElementById('utrInput').value.trim();
+        const status = document.getElementById('status');
 
         if (utr.length !== 12) {
-            statusDiv.innerHTML = "<div class='error'>❌ Please enter exactly 12 digits.</div>";
+            status.innerHTML = "<span class='error'>Invalid UTR length</span>";
             return;
         }
 
-        statusDiv.innerHTML = "Verifying with XRV Labs Secure Server...";
-        verifyBtn.disabled = true;
-
-        console.log("Checking UTR:", utr);
-
-        const paymentRef = firebase.database().ref('received_payments/' + utr);
-
-        paymentRef.once('value', (snapshot) => {
-            const data = snapshot.val();
-            console.log("Database Snapshot:", data);
-
+        status.innerText = "Searching last 5 mins transactions...";
+        
+        db.ref('received_payments/' + utr).once('value', (snapshot) => {
             if (snapshot.exists()) {
-                if (data.isUsed === true) {
-                    statusDiv.innerHTML = "<div class='error'>⚠️ This UTR has already been claimed!</div>";
-                    verifyBtn.disabled = false;
-                } else {
-                    // SUCCESS!
-                    paymentRef.update({ 
-                        isUsed: true, 
-                        claimedAt: firebase.database.ServerValue.TIMESTAMP 
-                    }).then(() => {
-                        statusDiv.innerHTML = "<div class='success'>✅ Payment Verified! Unlocking Product...</div>";
-                        
-                        // Redirect or Action
-                        setTimeout(() => {
-                            alert("Congratulations! Product Unlocked.");
-                            // window.location.href = "YOUR_LINK_HERE";
-                        }, 1500);
-                    }).catch(err => {
-                        console.error("Update Error:", err);
-                        statusDiv.innerHTML = "<div class='error'>Error updating database.</div>";
-                        verifyBtn.disabled = false;
-                    });
+                const data = snapshot.val();
+                const now = Date.now();
+                const fiveMinsAgo = now - (5 * 60 * 1000);
+
+                // 1. Check if used
+                if (data.isUsed) {
+                    status.innerHTML = "<span class='error'>UTR already used!</span>";
+                } 
+                // 2. Check if within 5 minutes
+                else if (data.timestamp < fiveMinsAgo) {
+                    status.innerHTML = "<span class='error'>Payment too old. Use within 5 mins.</span>";
+                }
+                // 3. Check Amount Tail (.26 or .62)
+                else if (!data.amount.endsWith(".26") && !data.amount.endsWith(".62")) {
+                    status.innerHTML = "<span class='error'>Invalid amount pattern.</span>";
+                }
+                else {
+                    // ALL OK!
+                    db.ref('received_payments/' + utr).update({ isUsed: true });
+                    status.innerHTML = "<span class='success'>✅ Verified! Opening Product...</span>";
+                    setTimeout(() => alert("Success!"), 1000);
                 }
             } else {
-                statusDiv.innerHTML = "<div class='error'>❌ UTR not found. Please ensure payment is done and wait 1 minute.</div>";
-                verifyBtn.disabled = false;
+                status.innerHTML = "<span class='error'>Payment not found in database.</span>";
             }
-        }, (error) => {
-            console.error("Firebase Read Error:", error);
-            statusDiv.innerHTML = "<div class='error'>Database Error: " + error.message + "</div>";
-            verifyBtn.disabled = false;
         });
     };
 </script>
