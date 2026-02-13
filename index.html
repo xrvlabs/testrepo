@@ -3,49 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - XRV LABS</title>
+    <title>XRV LABS - Secure Checkout</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .checkout-card { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; width: 350px; }
-        .price-tag { font-size: 2.5rem; font-weight: 800; color: #16a34a; margin: 1rem 0; }
-        .qr-container { background: #f1f5f9; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; }
-        .note { font-size: 0.85rem; color: #64748b; line-height: 1.4; }
-        .highlight { color: #dc2626; font-weight: bold; }
-        .btn { display: block; width: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px; margin-top: 10px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 380px; text-align: center; }
+        .price-tag { font-size: 2.5rem; font-weight: 800; color: #16a34a; margin: 10px 0; }
+        .qr-container { background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        input { width: 90%; padding: 12px; margin: 15px 0; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; text-align: center; }
+        .btn { width: 100%; padding: 14px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
         .btn-verify { background: #16a34a; }
         .btn:disabled { background: #cbd5e1; cursor: not-allowed; }
-        input { width: 90%; padding: 12px; margin: 15px 0; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 18px; text-align: center; }
         #status { margin-top: 15px; font-weight: bold; min-height: 20px; }
         .success { color: #16a34a; }
         .error { color: #dc2626; }
         .hidden { display: none; }
+        .note { font-size: 13px; color: #64748b; line-height: 1.4; }
     </style>
 </head>
 <body>
 
-<div class="checkout-card">
-    <div id="paymentStep">
+<div class="card">
+    <div id="payment-step">
         <h2>Complete Payment</h2>
-        <p class="note">Pay exactly the amount below for instant activation</p>
+        <p class="note">Pay exactly this amount for instant unlock</p>
         <div class="price-tag" id="displayAmount">₹0.00</div>
         
         <div class="qr-container">
             <img id="upiQr" src="" alt="Scan to Pay" style="width: 200px; height: 200px;">
         </div>
-
-        <p class="note">After payment, click the button below.</p>
-        <button class="btn" onclick="showVerifyStep()">I Have Paid</button>
+        
+        <p class="note">Pay with any UPI app (GPay, PhonePe, etc.)</p>
+        <button class="btn" id="paidBtn">I HAVE PAID</button>
     </div>
 
-    <div id="verifyStep" class="hidden">
-        <h2>Verify Payment</h2>
-        <p class="note">Enter the <span class="highlight">12-digit UTR</span> number from your payment confirmation.</p>
-        <input type="text" id="utrInput" placeholder="Enter UTR Number" maxlength="12">
-        <button class="btn btn-verify" id="verifyBtn">Unlock Product</button>
+    <div id="verify-step" class="hidden">
+        <h2>Verify UTR</h2>
+        <p class="note">Enter the 12-digit UTR/Ref number from your payment receipt.</p>
+        <input type="text" id="utrInput" placeholder="Enter 12 Digit UTR" maxlength="12">
+        <button class="btn btn-verify" id="unlockBtn">Unlock Product</button>
         <div id="status"></div>
-        <button style="margin-top:15px; background:none; border:none; color:#2563eb; cursor:pointer;" onclick="showPaymentStep()">← Back to QR</button>
+        <button style="margin-top:10px; background:none; border:none; color:#2563eb; cursor:pointer;" id="backBtn">← Go Back</button>
     </div>
 </div>
 
@@ -58,69 +57,81 @@
         projectId: "xrv-labs-workspace",
         storageBucket: "xrv-labs-workspace.appspot.com",
         messagingSenderId: "430335532805",
-        appId: "430335532805" // Ise apni complete App ID se update karein
+        appId: "430335532805" // Apna complete App ID yahan daalein
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // 2. Logic for Amount Tail (.26 or .62)
-    function getTailPrice(basePrice) {
+    // 2. Variables & Elements
+    const paymentStep = document.getElementById('payment-step');
+    const verifyStep = document.getElementById('verify-step');
+    const utrInput = document.getElementById('utrInput');
+    const status = document.getElementById('status');
+    const upiId = "cheeapsteeam@ptyes"; 
+    const basePrice = 10; 
+
+    // 3. Generate Unique Tail (.26 or .62)
+    function getTailPrice(price) {
         const tails = [0.26, 0.62];
         const randomTail = tails[Math.floor(Math.random() * tails.length)];
-        return (Math.floor(basePrice) + randomTail).toFixed(2);
+        return (Math.floor(price) + randomTail).toFixed(2);
     }
 
-    const basePrice = 10; 
     const finalPrice = getTailPrice(basePrice);
     document.getElementById('displayAmount').innerText = "₹" + finalPrice;
 
-    // 3. QR Code Generation
-    const upiId = "cheeapsteeam@ptyes"; 
+    // 4. Generate QR Code
     const upiUrl = `upi://pay?pa=${upiId}&pn=XRV_LABS&am=${finalPrice}&cu=INR`;
     document.getElementById('upiQr').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
 
-    // 4. Navigation Functions
-    function showVerifyStep() {
-        document.getElementById('paymentStep').classList.add('hidden');
-        document.getElementById('verifyStep').classList.remove('hidden');
-    }
+    // 5. Navigation
+    document.getElementById('paidBtn').onclick = () => {
+        paymentStep.classList.add('hidden');
+        verifyStep.classList.remove('hidden');
+    };
 
-    function showPaymentStep() {
-        document.getElementById('verifyStep').classList.add('hidden');
-        document.getElementById('paymentStep').classList.remove('hidden');
-    }
+    document.getElementById('backBtn').onclick = () => {
+        verifyStep.classList.add('hidden');
+        paymentStep.classList.remove('hidden');
+        status.innerText = "";
+    };
 
-    // 5. Verification Logic
-    document.getElementById('verifyBtn').onclick = function() {
-        const utr = document.getElementById('utrInput').value.trim();
-        const status = document.getElementById('status');
-
+    // 6. UTR Verification Logic
+    document.getElementById('unlockBtn').onclick = function() {
+        const utr = utrInput.value.trim();
+        
         if (utr.length !== 12) {
-            status.innerHTML = "<span class='error'>Please enter a valid 12-digit UTR.</span>";
+            status.innerHTML = "<span class='error'>Invalid UTR! Must be 12 digits.</span>";
             return;
         }
 
-        status.innerText = "Verifying...";
+        status.innerHTML = "Verifying with bank...";
         this.disabled = true;
 
         db.ref('received_payments/' + utr).once('value', (snapshot) => {
             if (snapshot.exists()) {
                 const data = snapshot.val();
+                
                 if (data.isUsed) {
-                    status.innerHTML = "<span class='error'>This UTR has already been used.</span>";
-                    document.getElementById('verifyBtn').disabled = false;
+                    status.innerHTML = "<span class='error'>This UTR is already used!</span>";
+                    document.getElementById('unlockBtn').disabled = false;
                 } else {
-                    // Success!
-                    db.ref('received_payments/' + utr).update({ isUsed: true, usedAt: Date.now() });
-                    status.innerHTML = "<span class='success'>Verified! Unlocking product...</span>";
+                    // SUCCESS!
+                    db.ref('received_payments/' + utr).update({ 
+                        isUsed: true, 
+                        usedAt: Date.now() 
+                    });
+                    
+                    status.innerHTML = "<span class='success'>✅ Payment Verified! Unlocking...</span>";
+                    
                     setTimeout(() => {
-                        window.location.href = "YOUR_PRODUCT_LINK_HERE";
+                        window.location.href = "YOUR_DOWNLOAD_LINK_HERE";
                     }, 2000);
                 }
             } else {
                 status.innerHTML = "<span class='error'>Payment not found. Please wait 30s after paying.</span>";
-                document.getElementById('verifyBtn').disabled = false;
+                document.getElementById('unlockBtn').disabled = false;
             }
         });
     };
