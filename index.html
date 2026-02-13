@@ -4,84 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verify Payment - XRV LABS</title>
-    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.x.x/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        input { width: 90%; padding: 12px; margin: 15px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; }
-        button { width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
-        button:disabled { background: #ccc; }
-        #status { margin-top: 15px; font-weight: bold; }
-        .success { color: #2e7d32; }
-        .error { color: #d32f2f; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f2f5; margin: 0; }
+        .card { background: white; padding: 2.5rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); width: 100%; max-width: 380px; text-align: center; }
+        h2 { color: #1a1a1a; margin-bottom: 0.5rem; }
+        p { color: #666; font-size: 14px; margin-bottom: 1.5rem; }
+        input { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #eee; border-radius: 8px; font-size: 16px; box-sizing: border-box; transition: border 0.3s; }
+        input:focus { border-color: #4CAF50; outline: none; }
+        button { width: 100%; padding: 14px; background: #4CAF50; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; margin-top: 10px; transition: background 0.3s; }
+        button:hover { background: #43a047; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        #status { margin-top: 20px; font-size: 14px; min-height: 20px; }
+        .success { color: #2e7d32; padding: 10px; background: #e8f5e9; border-radius: 6px; }
+        .error { color: #d32f2f; padding: 10px; background: #ffebee; border-radius: 6px; }
     </style>
 </head>
 <body>
 
 <div class="card">
     <h2>Verify Payment</h2>
-    <p>Enter the 12-digit UTR/Ref number from your payment confirmation.</p>
-    <input type="text" id="utrInput" placeholder="e.g. 123456789012" maxlength="12">
+    <p>Enter the 12-digit UTR/Reference number from your bank SMS/App.</p>
+    <input type="number" id="utrInput" placeholder="Enter 12 Digit UTR" oninput="if(this.value.length > 12) this.value = this.value.slice(0, 12);">
     <button id="verifyBtn">Unlock Product</button>
     <div id="status"></div>
 </div>
 
 <script>
-    // TODO: Replace with your actual Firebase config from Firebase Console
+    // --- 1. CONFIGURATION ---
     const firebaseConfig = {
-        apiKey: "AIzaSyDhRo9prltIjJPTlf1FP_Z5Zat7AWHdjzw",
-        authDomain: "xrv-labs-workspace.firebaseapp.com",
-        databaseURL: "https://xrv-labs-workspace-default-rtdb.firebaseio.com",
-        projectId: "xrv-labs-workspace",
-        storageBucket: "xrv-labs-workspace.appspot.com",
-        messagingSenderId: "430335532805",
-        appId: "1:430335532805:web:..."
-    };
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    apiKey: "AIzaSyB2-uJWrSxiMK_-gR2oBHMHtLuwkxFzEVY",
+
+    authDomain: "xrv-labs-workspace.firebaseapp.com",
+
+    databaseURL: "https://xrv-labs-workspace-default-rtdb.firebaseio.com",
+
+    projectId: "xrv-labs-workspace",
+
+    storageBucket: "xrv-labs-workspace.firebasestorage.app",
+
+    messagingSenderId: "430335532805",
+
+    appId: "1:430335532805:web:8b2be5a551e686bf13e16c"
+
+  };
+
+
+    // --- 2. INITIALIZATION ---
+    try {
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        console.log("Firebase Initialized Successfully");
+    } catch (e) {
+        console.error("Firebase Initialization Error:", e);
+    }
 
     const utrInput = document.getElementById('utrInput');
     const verifyBtn = document.getElementById('verifyBtn');
-    const status = document.getElementById('status');
+    const statusDiv = document.getElementById('status');
 
+    // --- 3. VERIFICATION LOGIC ---
     verifyBtn.onclick = async () => {
         const utr = utrInput.value.trim();
+
         if (utr.length !== 12) {
-            status.innerHTML = "<span class='error'>Please enter a valid 12-digit UTR.</span>";
+            statusDiv.innerHTML = "<div class='error'>❌ Please enter exactly 12 digits.</div>";
             return;
         }
 
-        status.innerText = "Verifying...";
+        statusDiv.innerHTML = "Verifying with XRV Labs Secure Server...";
         verifyBtn.disabled = true;
 
-        // Path: received_payments/UTR_NUMBER
-        const paymentRef = db.ref('received_payments/' + utr);
+        console.log("Checking UTR:", utr);
+
+        const paymentRef = firebase.database().ref('received_payments/' + utr);
 
         paymentRef.once('value', (snapshot) => {
+            const data = snapshot.val();
+            console.log("Database Snapshot:", data);
+
             if (snapshot.exists()) {
-                const data = snapshot.val();
-                
-                if (data.isUsed) {
-                    status.innerHTML = "<span class='error'>This UTR has already been used.</span>";
+                if (data.isUsed === true) {
+                    statusDiv.innerHTML = "<div class='error'>⚠️ This UTR has already been claimed!</div>";
                     verifyBtn.disabled = false;
                 } else {
-                    // SUCCESS! Mark it as used so no one else uses it
-                    paymentRef.update({ isUsed: true, usedAt: Date.now() });
-                    
-                    status.innerHTML = "<span class='success'>Payment Verified! Unlocking your product...</span>";
-                    
-                    // Yahan apna product access logic likho
-                    setTimeout(() => {
-                        window.location.href = "YOUR_DOWNLOAD_OR_ACCESS_LINK";
-                    }, 2000);
+                    // SUCCESS!
+                    paymentRef.update({ 
+                        isUsed: true, 
+                        claimedAt: firebase.database.ServerValue.TIMESTAMP 
+                    }).then(() => {
+                        statusDiv.innerHTML = "<div class='success'>✅ Payment Verified! Unlocking Product...</div>";
+                        
+                        // Redirect or Action
+                        setTimeout(() => {
+                            alert("Congratulations! Product Unlocked.");
+                            // window.location.href = "YOUR_LINK_HERE";
+                        }, 1500);
+                    }).catch(err => {
+                        console.error("Update Error:", err);
+                        statusDiv.innerHTML = "<div class='error'>Error updating database.</div>";
+                        verifyBtn.disabled = false;
+                    });
                 }
             } else {
-                status.innerHTML = "<span class='error'>Payment not found. If you just paid, please wait 30 seconds and try again.</span>";
+                statusDiv.innerHTML = "<div class='error'>❌ UTR not found. Please ensure payment is done and wait 1 minute.</div>";
                 verifyBtn.disabled = false;
             }
+        }, (error) => {
+            console.error("Firebase Read Error:", error);
+            statusDiv.innerHTML = "<div class='error'>Database Error: " + error.message + "</div>";
+            verifyBtn.disabled = false;
         });
     };
 </script>
