@@ -2,106 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XRV Secure Verify</title>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <title>Checkout - XRV LABS</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #0f172a; color: white; margin: 0; }
-        .card { background: #1e293b; padding: 2.5rem; border-radius: 20px; width: 100%; max-width: 400px; text-align: center; border: 1px solid #334155; }
-        .timer-box { font-size: 24px; font-weight: bold; color: #fbbf24; margin: 15px 0; background: #334155; padding: 10px; border-radius: 10px; }
-        input { width: 100%; padding: 14px; margin: 15px 0; border: 2px solid #334155; border-radius: 10px; background: #0f172a; color: white; font-size: 18px; text-align: center; box-sizing: border-box; }
-        button { width: 100%; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.3s; }
-        button:hover { background: #2563eb; }
-        button:disabled { background: #64748b; cursor: not-allowed; }
-        #status { margin-top: 20px; min-height: 20px; font-size: 14px; }
-        .error { color: #f87171; } .success { color: #4ade80; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f8fafc; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .checkout-card { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; width: 350px; }
+        .price-tag { font-size: 2.5rem; font-weight: 800; color: #16a34a; margin: 1rem 0; }
+        .qr-container { background: #f1f5f9; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; }
+        .note { font-size: 0.85rem; color: #64748b; line-height: 1.4; }
+        .highlight { color: #dc2626; font-weight: bold; }
+        .btn { display: block; background: #2563eb; color: white; padding: 12px; border-radius: 8px; text-decoration: none; margin-top: 1rem; font-weight: 600; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Verify Payment</h2>
-    <p>Session expires in:</p>
-    <div class="timer-box" id="timer">05:00</div>
+<div class="checkout-card">
+    <h2>Complete Payment</h2>
+    <p class="note">Pay exactly the amount below for instant activation</p>
+    <div class="price-tag" id="displayAmount">₹0.00</div>
     
-    <input type="number" id="utrInput" placeholder="Enter 12 Digit UTR">
-    <button id="verifyBtn">Unlock Product</button>
-    <div id="status"></div>
+    <div class="qr-container">
+        <img id="upiQr" src="" alt="Scan to Pay" style="width: 200px; height: 200px;">
+    </div>
+
+    <p class="note">After payment, enter your <span class="highlight">12-digit UTR</span> on the next page.</p>
+    <a href="VERIFY_PAGE_LINK.html" class="btn">I Have Paid</a>
 </div>
 
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyDhRo9prltIjJPTlf1FP_Z5Zat7AWHdjzw",
-        authDomain: "xrv-labs-workspace.firebaseapp.com",
-        databaseURL: "https://xrv-labs-workspace-default-rtdb.firebaseio.com",
-        projectId: "xrv-labs-workspace",
-        storageBucket: "xrv-labs-workspace.appspot.com",
-        messagingSenderId: "430335532805",
-        appId: "YOUR_WEB_APP_ID"
-    };
+    function getTailPrice(basePrice) {
+        const tails = [0.26, 0.62];
+        const randomTail = tails[Math.floor(Math.random() * tails.length)];
+        return (Math.floor(basePrice) + randomTail).toFixed(2);
+    }
 
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+    const basePrice = 499; // Aapka product price
+    const finalPrice = getTailPrice(basePrice);
+    document.getElementById('displayAmount').innerText = "₹" + finalPrice;
 
-    // --- Timer Logic ---
-    let timeLeft = 300; // 5 minutes
-    const timerDisplay = document.getElementById('timer');
+    // Replace with your UPI ID
+    const upiId = "cheeapsteeam@ptyes"; 
+    const upiUrl = `upi://pay?pa=${upiId}&pn=XRV_LABS&am=${finalPrice}&cu=INR`;
     
-    const countdown = setInterval(() => {
-        let minutes = Math.floor(timeLeft / 60);
-        let seconds = timeLeft % 60;
-        timerDisplay.innerHTML = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        
-        if (timeLeft <= 0) {
-            clearInterval(countdown);
-            document.getElementById('verifyBtn').disabled = true;
-            document.getElementById('status').innerHTML = "<span class='error'>Session Expired! Please refresh.</span>";
-        }
-        timeLeft--;
-    }, 1000);
-
-    // --- Verification Logic ---
-    document.getElementById('verifyBtn').onclick = function() {
-        const utr = document.getElementById('utrInput').value.trim();
-        const status = document.getElementById('status');
-
-        if (utr.length !== 12) {
-            status.innerHTML = "<span class='error'>Invalid UTR length</span>";
-            return;
-        }
-
-        status.innerText = "Searching last 5 mins transactions...";
-        
-        db.ref('received_payments/' + utr).once('value', (snapshot) => {
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                const now = Date.now();
-                const fiveMinsAgo = now - (5 * 60 * 1000);
-
-                // 1. Check if used
-                if (data.isUsed) {
-                    status.innerHTML = "<span class='error'>UTR already used!</span>";
-                } 
-                // 2. Check if within 5 minutes
-                else if (data.timestamp < fiveMinsAgo) {
-                    status.innerHTML = "<span class='error'>Payment too old. Use within 5 mins.</span>";
-                }
-                // 3. Check Amount Tail (.26 or .62)
-                else if (!data.amount.endsWith(".26") && !data.amount.endsWith(".62")) {
-                    status.innerHTML = "<span class='error'>Invalid amount pattern.</span>";
-                }
-                else {
-                    // ALL OK!
-                    db.ref('received_payments/' + utr).update({ isUsed: true });
-                    status.innerHTML = "<span class='success'>✅ Verified! Opening Product...</span>";
-                    setTimeout(() => alert("Success!"), 1000);
-                }
-            } else {
-                status.innerHTML = "<span class='error'>Payment not found in database.</span>";
-            }
-        });
-    };
+    // QR Code API
+    document.getElementById('upiQr').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
 </script>
 
 </body>
