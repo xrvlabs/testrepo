@@ -3,63 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AKSHAR — Selected Work</title>
+    <title>AKSHAR.DEV — Selected Work</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600&family=Space+Mono:wght@400&family=Syncopate:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* COLORS */
             --bg: #050505;
-            --card-bg: #111;
+            --card-bg: #0a0a0a;
             --text: #e0e0e0;
-            --dim: #888;
-            --accent: #ff4d00;
-            --border: rgba(255,255,255,0.08);
+            --dim: #666;
+            --accent: #ff3333;
+            --border: rgba(255,255,255,0.06);
 
-            /* DIMENSIONS - RESPONSIVE VARIABLES */
-            --tab-height: 80px;      /* Desktop Tab Height */
-            --card-padding: 3rem;    /* Desktop Padding */
-            --stack-start: 10vh;     /* Where the first card sticks */
+            /* CONFIG */
+            --stack-start: 10vh;   /* The gap at the top where cards stick */
+            --tab-height: 60px;    /* Height of the visible card strip */
         }
 
-        /* --- MOBILE/TABLET VARIABLES --- */
-        @media (max-width: 768px) {
-            :root {
-                --tab-height: 50px;      /* Smaller tabs on mobile */
-                --card-padding: 1.5rem;  /* Smaller padding */
-                --stack-start: 5vh;      /* Start stacking higher up */
-            }
+        /* --- SCROLLBAR HIDING --- */
+        @media (hover: none) and (pointer: coarse) {
+            html, body, .card-content { scrollbar-width: none; -ms-overflow-style: none; }
+            ::-webkit-scrollbar { display: none; }
         }
-
-        /* ================================================================
-           SCROLLBAR HIDING (TOUCH DEVICES ONLY) 
-           Targeting devices with coarse pointers (fingers) or small screens
-           ================================================================
-        */
-        @media (hover: none) and (pointer: coarse), (max-width: 1024px) {
-            /* Chrome, Safari, Opera */
-            html::-webkit-scrollbar,
-            body::-webkit-scrollbar,
-            .card-info::-webkit-scrollbar {
-                display: none;
-                width: 0;
-                height: 0;
-                background: transparent;
-            }
-
-            /* Firefox, IE, Edge */
-            html, body, .card-info {
-                scrollbar-width: none;  /* Firefox */
-                -ms-overflow-style: none;  /* IE and Edge */
-            }
-        }
-
-        /* Standard Scrollbar for Desktop (Mouse users still need to see it) */
-        @media (hover: hover) and (pointer: fine) and (min-width: 1025px) {
-            ::-webkit-scrollbar { width: 8px; }
+        @media (hover: hover) and (pointer: fine) {
+            ::-webkit-scrollbar { width: 6px; }
             ::-webkit-scrollbar-track { background: var(--bg); }
-            ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-            ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+            ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -69,283 +38,260 @@
             color: var(--text);
             font-family: 'Manrope', sans-serif;
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
         }
 
-        html { scroll-behavior: smooth; }
+        /* --- THE SLIDING BRAND HEADER --- */
+        .brand-sticky-header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            height: var(--stack-start); /* Matches the gap exactly */
+            background: rgba(5, 5, 5, 0.8); /* Semi-transparent */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100; /* Above cards */
+            
+            display: flex; align-items: center; justify-content: center;
+            
+            /* Hidden initially */
+            transform: translateY(-100%);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-        /* --- HERO SECTION --- */
+        /* The class JS will add to slide it down */
+        .brand-sticky-header.visible {
+            transform: translateY(0);
+        }
+
+        .brand-logo-text {
+            font-family: 'Syncopate', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+            color: #fff;
+            text-transform: uppercase;
+        }
+
+        /* --- MAIN HERO --- */
         header {
-            min-height: 70vh;
+            min-height: 80vh; /* Taller hero to allow scroll distance */
+            padding: 0 8vw;
             display: flex; flex-direction: column; justify-content: center;
-            padding: 0 max(5vw, 1.5rem);
         }
         
+        .brand-static {
+            font-family: 'Space Mono', monospace;
+            color: var(--accent);
+            font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;
+            margin-bottom: 1.5rem;
+        }
+
         h1 {
             font-family: 'Syncopate', sans-serif;
-            font-size: clamp(2.5rem, 9vw, 6rem); 
+            font-size: clamp(3rem, 10vw, 7rem);
+            line-height: 0.9;
             text-transform: uppercase;
-            line-height: 0.95;
-            margin-bottom: 1.5rem;
             color: #fff;
-            letter-spacing: -0.02em;
-        }
-        
-        .subtitle {
-            font-family: 'Manrope', monospace;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            font-size: clamp(0.7rem, 2vw, 0.9rem);
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
         }
 
-        /* --- STACK AREA --- */
+        /* --- STACK SECTION --- */
         .stack-area {
-            padding-bottom: 20vh;
             width: 100%;
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
+            padding-bottom: 20vh;
         }
 
-        /* --- CARD BASE --- */
         .card {
-            position: sticky; 
-            height: 85vh; 
+            position: sticky;
+            height: 90vh; 
             background: var(--card-bg);
             border-top: 1px solid var(--border);
-            box-shadow: 0 -15px 40px rgba(0,0,0,0.8);
             overflow: hidden;
-            display: flex; 
-            flex-direction: column;
+            display: flex; flex-direction: column;
+            box-shadow: 0 -20px 60px rgba(0,0,0,0.8);
         }
 
-        /* --- STACKING LOGIC --- */
+        /* Stacking Logic */
         .card:nth-child(1) { top: var(--stack-start); }
         .card:nth-child(2) { top: calc(var(--stack-start) + var(--tab-height)); }
         .card:nth-child(3) { top: calc(var(--stack-start) + (var(--tab-height) * 2)); }
         .card:nth-child(4) { top: calc(var(--stack-start) + (var(--tab-height) * 3)); }
 
-        /* --- CARD HEADER --- */
         .card-header {
-            height: var(--tab-height); 
-            min-height: var(--tab-height);
+            height: var(--tab-height); min-height: var(--tab-height);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 var(--card-padding);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 0 3vw;
             background: var(--card-bg);
-            z-index: 2;
+            border-bottom: 1px solid var(--border);
+            z-index: 10;
         }
         
-        .project-index {
-            font-family: 'Syncopate', sans-serif;
-            font-size: clamp(0.8rem, 1.5vw, 1.2rem); 
-            color: var(--dim);
-        }
-        
-        .project-title-bar {
-            font-size: clamp(0.8rem, 1.5vw, 1.2rem);
-            font-weight: 600; text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .idx { font-family: 'Space Mono', monospace; color: var(--dim); font-size: 0.8rem; }
+        .mini-title { 
+            font-family: 'Manrope', sans-serif; font-weight: 600; 
+            text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.75rem; 
         }
 
-        /* --- CARD BODY --- */
+        /* --- CARD INNER CONTENT --- */
         .card-body {
-            display: grid;
-            grid-template-columns: 1fr 1.5fr; 
+            flex: 1;
+            display: grid; grid-template-columns: 1fr 1.2fr;
             height: 100%;
-            overflow: hidden;
         }
 
-        /* --- INFO SECTION --- */
-        .card-info {
-            padding: var(--card-padding);
-            border-right: 1px solid var(--border);
-            display: flex; flex-direction: column; justify-content: space-between;
-            overflow-y: auto; /* Internal scroll if text is too long */
-        }
-        
-        .info-content h2 {
-            font-size: clamp(1.5rem, 3vw, 2.5rem);
-            margin-bottom: 1rem;
-            line-height: 1.1;
-            font-weight: 500;
-        }
-        
-        .project-desc {
-            font-size: clamp(0.85rem, 1.1vw, 1.1rem); 
-            line-height: 1.6; 
-            color: var(--dim);
-            max-width: 450px;
-        }
-
-        .tags {
-            margin-top: 1.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;
-        }
-        
-        .tag {
-            font-size: 0.65rem; 
-            border: 1px solid rgba(255,255,255,0.15); 
-            padding: 0.35rem 0.7rem;
-            border-radius: 50px; 
-            text-transform: uppercase; 
-            color: #aaa;
-            letter-spacing: 0.05em;
-        }
-
-        .btn {
-            margin-top: 2rem; display: inline-block;
-            color: var(--accent); font-weight: 600; text-decoration: none;
-            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;
-            width: fit-content;
-        }
-
-        /* --- VISUAL SECTION --- */
-        .card-visual {
-            background: #080808;
+        .card-content {
+            padding: 4vw;
+            display: flex; flex-direction: column; justify-content: center;
             position: relative;
-            width: 100%; height: 100%;
+            border-right: 1px solid var(--border);
         }
+
+        .bg-number {
+            position: absolute; top: 2rem; left: 2rem;
+            font-family: 'Syncopate', sans-serif;
+            font-size: clamp(6rem, 15vw, 12rem);
+            color: rgba(255,255,255,0.02);
+            line-height: 1; pointer-events: none;
+        }
+
+        .project-meta { position: relative; z-index: 1; }
+        .project-title { font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 300; line-height: 1.1; margin-bottom: 1.5rem; color: #fff; }
+        .project-desc { font-size: clamp(1rem, 1.2vw, 1.15rem); color: var(--dim); line-height: 1.7; max-width: 500px; margin-bottom: 2.5rem; }
+        .tech-stack { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3rem; }
         
+        .btn-link {
+            font-family: 'Manrope', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem;
+            border-bottom: 1px solid var(--dim); padding-bottom: 4px; display: inline-block; width: fit-content;
+        }
+
+        .card-visual { position: relative; overflow: hidden; background: #111; }
         .card-visual img {
             width: 100%; height: 100%; object-fit: cover;
-            opacity: 0.7; filter: grayscale(20%);
-            display: block;
+            filter: grayscale(100%) contrast(1.1);
+            transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1), filter 0.5s ease;
         }
+        .card:hover .card-visual img { filter: grayscale(0%) contrast(1); transform: scale(1.03); }
 
-        /* --- RESPONSIVE LAYOUT (Mobile/Tablet) --- */
-        @media (max-width: 900px) {
-            .card-body {
-                grid-template-columns: 1fr; /* Stack vertically */
-                grid-template-rows: auto 1fr; /* Info auto height, Image rest */
-            }
-            
-            .card-info {
-                border-right: none;
-                border-bottom: 1px solid var(--border);
-                padding-bottom: 2rem;
-            }
-            
-            .info-content h2 { margin-bottom: 0.5rem; }
-            .project-desc { margin-bottom: 0.5rem; }
-            .btn { margin-top: 1.5rem; }
-            
-            .card-visual { min-height: 0; }
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .card-body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+            .card-content { border-right: none; border-bottom: 1px solid var(--border); padding: 2rem 1.5rem; }
+            .bg-number { font-size: 8rem; top: 1rem; left: 1rem; }
+            .card-visual img { filter: grayscale(0%); }
         }
-        
-        @media (max-width: 400px) {
-            .card-body { grid-template-rows: 2fr 1fr; } 
-            .tags { display: none; }
-        }
-
     </style>
 </head>
 <body>
 
+    <div class="brand-sticky-header">
+        <div class="brand-logo-text">AKSHAR.DEV</div>
+    </div>
+
     <header>
-        <div class="subtitle">Portfolio 2026</div>
-        <h1>Selected<br>Projects</h1>
-        <p style="color: var(--dim); max-width: 300px; font-size: 0.9rem; line-height: 1.5;">
-            Scroll down to view the archive. <br>
-            <span style="color: var(--accent); font-size: 0.8rem;">↓ INTERACTIVE STACK</span>
-        </p>
+        <div class="brand-static">Akshar / Dev</div>
+        <h1>Selected<br>Works</h1>
+        <p style="color:var(--dim); font-family:'Space Mono'; font-size:0.8rem; margin-top:1rem;">↓ SCROLL TO STACK</p>
     </header>
 
     <div class="stack-area">
+
+        <div class="card">
+            <div class="card-header">
+                <span class="idx">#01</span>
+                <span class="mini-title">Task Planner</span>
+            </div>
+            <div class="card-body">
+                <div class="card-content">
+                    <div class="bg-number">01</div>
+                    <div class="project-meta">
+                        <h2 class="project-title">Desktop Workflow</h2>
+                        <div class="tech-stack">C# .NET / WPF / SQLite</div>
+                        <p class="project-desc">A robust Windows desktop application designed for deep work sessions with Kanban boards and encryption.</p>
+                        <a href="#" class="btn-link">Read Case Study</a>
+                    </div>
+                </div>
+                <div class="card-visual">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop" alt="Task App">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="idx">#02</span>
+                <span class="mini-title">Inventory Sync</span>
+            </div>
+            <div class="card-body">
+                <div class="card-content">
+                    <div class="bg-number">02</div>
+                    <div class="project-meta">
+                        <h2 class="project-title">Retail Dashboard</h2>
+                        <div class="tech-stack">React / Supabase / Realtime</div>
+                        <p class="project-desc">Real-time stock management utilizing Websockets to sync inventory changes instantly across devices.</p>
+                        <a href="#" class="btn-link">View Demo</a>
+                    </div>
+                </div>
+                <div class="card-visual">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop" alt="Dashboard">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="idx">#03</span>
+                <span class="mini-title">Notes Native</span>
+            </div>
+            <div class="card-body">
+                <div class="card-content">
+                    <div class="bg-number">03</div>
+                    <div class="project-meta">
+                        <h2 class="project-title">Offline First</h2>
+                        <div class="tech-stack">Kotlin / Jetpack / Room</div>
+                        <p class="project-desc">Native Android app that writes locally for zero latency and syncs silently when connectivity restores.</p>
+                        <a href="#" class="btn-link">Download APK</a>
+                    </div>
+                </div>
+                <div class="card-visual">
+                    <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1200&auto=format&fit=crop" alt="Mobile App">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div style="height: 30vh; display:flex; align-items:center; justify-content:center;">
+        <p style="color:var(--dim); font-size:0.8rem;">© 2026 Akshar</p>
+    </div>
+
+    <script>
+        // --- LOGIC FOR SLIDING HEADER ---
+        const brandHeader = document.querySelector('.brand-sticky-header');
+        const stackArea = document.querySelector('.stack-area');
         
-        <div class="card">
-            <div class="card-header">
-                <span class="project-index">01</span>
-                <span class="project-title-bar">Task Planner</span>
-            </div>
-            <div class="card-body">
-                <div class="card-info">
-                    <div class="info-content">
-                        <h2>Desktop Workflow</h2>
-                        <p class="project-desc">A Windows WPF application designed for deep work. Features drag-and-drop Kanban boards and local SQLite encryption.</p>
-                        <div class="tags">
-                            <span class="tag">C# .NET</span><span class="tag">WPF</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn">View Case Study →</a>
-                </div>
-                <div class="card-visual">
-                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop" alt="Project 1">
-                </div>
-            </div>
-        </div>
+        function handleScroll() {
+            // Calculate where the stack area starts relative to viewport
+            const rect = stackArea.getBoundingClientRect();
+            
+            // The cards stick at 10vh. 
+            // We want the header to appear when the stack area's top hits that 10vh mark.
+            // 10vh in pixels:
+            const triggerPoint = window.innerHeight * 0.10;
 
-        <div class="card">
-            <div class="card-header">
-                <span class="project-index">02</span>
-                <span class="project-title-bar">Inventory Sync</span>
-            </div>
-            <div class="card-body">
-                <div class="card-info">
-                    <div class="info-content">
-                        <h2>Web Dashboard</h2>
-                        <p class="project-desc">Real-time stock management system. Uses Supabase for live updates across multiple warehouse devices instantly.</p>
-                        <div class="tags">
-                            <span class="tag">React</span><span class="tag">Supabase</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn">View Live Demo →</a>
-                </div>
-                <div class="card-visual">
-                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop" alt="Project 2">
-                </div>
-            </div>
-        </div>
+            // If the top of the stack area is at or above the trigger point
+            if (rect.top <= triggerPoint) {
+                brandHeader.classList.add('visible');
+            } else {
+                brandHeader.classList.remove('visible');
+            }
+        }
 
-        <div class="card">
-            <div class="card-header">
-                <span class="project-index">03</span>
-                <span class="project-title-bar">Notes App</span>
-            </div>
-            <div class="card-body">
-                <div class="card-info">
-                    <div class="info-content">
-                        <h2>Android Native</h2>
-                        <p class="project-desc">Offline-first architecture. Writes data locally and syncs to the cloud silently when connection is restored.</p>
-                        <div class="tags">
-                            <span class="tag">Kotlin</span><span class="tag">Jetpack</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn">Download APK →</a>
-                </div>
-                <div class="card-visual">
-                    <img src="https://images.unsplash.com/photo-1555421689-4926337621fa?q=80&w=1000&auto=format&fit=crop" alt="Project 3">
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <span class="project-index">04</span>
-                <span class="project-title-bar">API Service</span>
-            </div>
-            <div class="card-body">
-                <div class="card-info">
-                    <div class="info-content">
-                        <h2>Backend Systems</h2>
-                        <p class="project-desc">High-throughput REST API with Redis caching and Docker containerization for scalable deployment.</p>
-                        <div class="tags">
-                            <span class="tag">Node</span><span class="tag">Redis</span>
-                        </div>
-                    </div>
-                    <a href="#" class="btn">View Github →</a>
-                </div>
-                <div class="card-visual">
-                    <img src="https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?q=80&w=1000&auto=format&fit=crop" alt="Project 4">
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div style="height: 30vh; display: flex; align-items: center; justify-content: center;">
-        <p style="color: var(--dim); font-size: 0.8rem;">END OF LIST</p>
-    </div>
+        window.addEventListener('scroll', handleScroll);
+        // Run once on load in case user reloads in middle of page
+        handleScroll();
+    </script>
 
 </body>
 </html>
