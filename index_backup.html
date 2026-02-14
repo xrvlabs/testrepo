@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XRV LABS - Secure Checkout</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 380px; text-align: center; }
+        .price-tag { font-size: 2.5rem; font-weight: 800; color: #16a34a; margin: 10px 0; }
+        .qr-container { background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        input { width: 90%; padding: 12px; margin: 15px 0; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; text-align: center; }
+        .btn { width: 100%; padding: 14px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        .btn-verify { background: #16a34a; }
+        .btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+        #status { margin-top: 15px; font-weight: bold; min-height: 20px; }
+        .success { color: #16a34a; }
+        .error { color: #dc2626; }
+        .hidden { display: none; }
+        .note { font-size: 13px; color: #64748b; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div id="payment-step">
+        <h2>Complete Payment</h2>
+        <p class="note">Pay exactly this amount for instant unlock</p>
+        <div class="price-tag" id="displayAmount">₹0.00</div>
+        
+        <div class="qr-container">
+            <img id="upiQr" src="" alt="Scan to Pay" style="width: 200px; height: 200px;">
+        </div>
+        
+        <p class="note">Pay with any UPI app (GPay, PhonePe, etc.)</p>
+        <button class="btn" id="paidBtn">I HAVE PAID</button>
+    </div>
+
+    <div id="verify-step" class="hidden">
+        <h2>Verify UTR</h2>
+        <p class="note">Enter the 12-digit UTR/Ref number from your payment receipt.</p>
+        <input type="text" id="utrInput" placeholder="Enter 12 Digit UTR" maxlength="12">
+        <button class="btn btn-verify" id="unlockBtn">Unlock Product</button>
+        <div id="status"></div>
+        <button style="margin-top:10px; background:none; border:none; color:#2563eb; cursor:pointer;" id="backBtn">← Go Back</button>
+    </div>
+</div>
+
+<script>
+    // 1. Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDhRo9prltIjJPTlf1FP_Z5Zat7AWHdjzw",
+        authDomain: "xrv-labs-workspace.firebaseapp.com",
+        databaseURL: "https://xrv-labs-workspace-default-rtdb.firebaseio.com",
+        projectId: "xrv-labs-workspace",
+        storageBucket: "xrv-labs-workspace.appspot.com",
+        messagingSenderId: "430335532805",
+        appId: "430335532805" // Apna complete App ID yahan daalein
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // 2. Variables & Elements
+    const paymentStep = document.getElementById('payment-step');
+    const verifyStep = document.getElementById('verify-step');
+    const utrInput = document.getElementById('utrInput');
+    const status = document.getElementById('status');
+    const upiId = "cheeapsteeam@ptyes"; 
+    const basePrice = 10; 
+
+    // 3. Generate Unique Tail (.26 or .62)
+    function getTailPrice(price) {
+        const tails = [0.26, 0.62];
+        const randomTail = tails[Math.floor(Math.random() * tails.length)];
+        return (Math.floor(price) + randomTail).toFixed(2);
+    }
+
+    const finalPrice = getTailPrice(basePrice);
+    document.getElementById('displayAmount').innerText = "₹" + finalPrice;
+
+    // 4. Generate QR Code
+    const upiUrl = `upi://pay?pa=${upiId}&pn=XRV_LABS&am=${finalPrice}&cu=INR`;
+    document.getElementById('upiQr').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
+
+    // 5. Navigation
+    document.getElementById('paidBtn').onclick = () => {
+        paymentStep.classList.add('hidden');
+        verifyStep.classList.remove('hidden');
+    };
+
+    document.getElementById('backBtn').onclick = () => {
+        verifyStep.classList.add('hidden');
+        paymentStep.classList.remove('hidden');
+        status.innerText = "";
+    };
+
+    // 6. UTR Verification Logic
+    document.getElementById('unlockBtn').onclick = function() {
+        const utr = utrInput.value.trim();
+        
+        if (utr.length !== 12) {
+            status.innerHTML = "<span class='error'>Invalid UTR! Must be 12 digits.</span>";
+            return;
+        }
+
+        status.innerHTML = "Verifying with bank...";
+        this.disabled = true;
+
+        db.ref('received_payments/' + utr).once('value', (snapshot) => {
+            if (snapshot.exists()) {
+                const data = snapshot.val();
+                
+                if (data.isUsed) {
+                    status.innerHTML = "<span class='error'>This UTR is already used!</span>";
+                    document.getElementById('unlockBtn').disabled = false;
+                } else {
+                    // SUCCESS!
+                    db.ref('received_payments/' + utr).update({ 
+                        isUsed: true, 
+                        usedAt: Date.now() 
+                    });
+                    
+                    status.innerHTML = "<span class='success'>✅ Payment Verified! Unlocking...</span>";
+                    
+                    setTimeout(() => {
+                        window.location.href = "YOUR_DOWNLOAD_LINK_HERE";
+                    }, 2000);
+                }
+            } else {
+                status.innerHTML = "<span class='error'>Payment not found. Please wait 30s after paying.</span>";
+                document.getElementById('unlockBtn').disabled = false;
+            }
+        });
+    };
+</script>
+
+</body>
+</html>
