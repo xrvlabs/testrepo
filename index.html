@@ -40,7 +40,7 @@
             color: var(--fg);
             font-family: 'Syne', sans-serif;
             overflow-x: hidden;
-            cursor: none;
+            cursor: none; 
         }
         
         /* --- GLOBAL BACKGROUND ANIMATIONS --- */
@@ -84,6 +84,27 @@
             position: fixed; inset: 0; z-index: 8999; pointer-events: none;
             background: radial-gradient(ellipse at center, transparent 50%, rgba(10, 10, 15, 0.5) 100%);
         }
+
+        /* --- SLIDING STICKY HEADER (BY XRV LABS) --- */
+        .brand-sticky-header {
+            position: fixed; top: 0; left: 0; width: 100%;
+            height: 80px; 
+            /* Updated for better blur/transparency */
+            background: rgba(10, 10, 15, 0.75); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000; 
+            display: flex; align-items: center; justify-content: center;
+            transform: translateY(-100%);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .brand-sticky-header.visible { transform: translateY(0); }
+        .brand-logo-text {
+            font-family: 'Syncopate', sans-serif; font-weight: 700;
+            font-size: 1.1rem; letter-spacing: 0.1em; color: #fff; text-transform: uppercase;
+        }
+        .brand-logo-text span { color: var(--accent); }
         
         /* --- CURSOR STYLES --- */
         .cursor-element { position: fixed; top: 0; left: 0; pointer-events: none; will-change: transform; backface-visibility: hidden; transition: opacity 0.3s ease; z-index: 9999; }
@@ -99,16 +120,27 @@
         .cursor-ring.clicking { width: 30px; height: 30px; margin-left: -15px; margin-top: -15px; border-color: rgba(0, 255, 163, 1); }
         .cursor-dot.clicking { transform: scale(1.5); }
         
+        /* Mouse Indicator */
         .mouse-indicator { position: fixed; bottom: 40px; right: 40px; width: 26px; height: 42px; border: 2px solid rgba(0, 255, 163, 0.5); border-radius: 13px; pointer-events: none; z-index: 9998; opacity: 0; transition: opacity 0.4s ease; display: flex; justify-content: center; padding-top: 8px; }
         .mouse-indicator.visible { opacity: 1; }
         .mouse-wheel { width: 3px; height: 8px; background: var(--accent); border-radius: 2px; }
-        
-        /* --- NAVIGATION --- */
+
+        /* --- NAVIGATION (AKS.HAR) --- */
         nav {
             position: fixed; top: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center;
             padding: clamp(.8rem,2vw,1.4rem) clamp(1rem,5vw,4rem); z-index: 500;
-            background: linear-gradient(to bottom, rgba(10,10,15,0.9) 0%, transparent 100%); backdrop-filter: blur(10px);
+            background: linear-gradient(to bottom, rgba(10,10,15,0.9) 0%, transparent 100%); 
+            backdrop-filter: blur(10px);
+            /* New Transition for sliding up */
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(0);
         }
+        
+        /* Class to hide the main nav */
+        nav.nav-hidden {
+            transform: translateY(-100%);
+        }
+
         .logo { font-size: clamp(1rem,3vw,1.4rem); font-weight: 800; letter-spacing: .08em; color: var(--fg); }
         .logo span { color: var(--accent); }
         .nav-links { display: flex; gap: clamp(1.2rem,3vw,3rem); list-style: none; }
@@ -143,39 +175,54 @@
         
         /* Contact Button Text/Icon Toggle */
         .btn-icon { display: none; }
-        
-        /* Switch to Icon Button on small screens (e.g. phones < 400px) */
         @media (max-width: 400px) {
-            .contact-btn {
-                padding: 0.85rem; /* Make padding even for icon shape */
-                aspect-ratio: 1;  /* Forces square shape if supported */
-                width: 48px;      /* Fallback width */
-            }
-            .contact-btn .btn-text {
-                display: none;    /* Hide Text */
-            }
-            .contact-btn .btn-icon {
-                display: flex;    /* Show Icon */
-                align-items: center;
-                justify-content: center;
-            }
+            .contact-btn { padding: 0.85rem; aspect-ratio: 1; width: 48px; }
+            .contact-btn .btn-text { display: none; }
+            .contact-btn .btn-icon { display: flex; align-items: center; justify-content: center; }
         }
 
         @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Skills Marquee */
-        .skills-marquee-wrapper { width: 100vw; margin-left: calc(-1 * clamp(1rem,6vw,5rem)); margin-top: clamp(2rem,4vw,3.5rem); overflow: hidden; position: relative; opacity: 0; animation: fadeUp .7s .75s forwards; }
-        .skills-marquee-wrapper::before, .skills-marquee-wrapper::after { content: ''; position: absolute; top: 0; bottom: 0; width: 100px; z-index: 2; pointer-events: none; }
-        .skills-marquee-wrapper::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
-        .skills-marquee-wrapper::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
-        .skills-marquee { display: flex; width: max-content; animation: marquee 25s linear infinite; }
-        .skills-marquee:hover { animation-play-state: paused; }
+        /* --- SKILLS MARQUEE (Glass Pills) --- */
+        .skills-marquee-wrapper { 
+            width: 100vw; margin-left: calc(-1 * clamp(1rem,6vw,5rem)); 
+            margin-top: clamp(3rem,6vw,5rem); 
+            overflow: hidden; position: relative; opacity: 0; animation: fadeUp .7s .75s forwards; 
+            padding: 1rem 0;
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+        
+        .skills-marquee { display: flex; width: max-content; animation: marquee 35s linear infinite; }
+        
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        .skills-track { display: flex; gap: clamp(2rem, 4vw, 4rem); padding: 1rem 0; }
-        .skill-item { display: flex; align-items: center; gap: 0.6rem; white-space: nowrap; font-family: 'Space Mono', monospace; font-size: clamp(0.7rem, 1vw, 0.85rem); letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); transition: color 0.3s, transform 0.3s; cursor: none; }
-        .skill-item:hover { color: var(--fg); transform: scale(1.05); }
-        .skill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 10px currentColor; }
-        .skill-separator { color: rgba(0,255,163,0.3); font-size: 1.2rem; user-select: none; }
+        
+        .skills-track { display: flex; gap: 1.5rem; padding: 0 0.75rem; }
+        
+        .skill-pill {
+            display: flex; align-items: center; gap: 0.6rem; 
+            font-family: 'Space Mono', monospace; font-size: 0.75rem; 
+            letter-spacing: 0.05em; text-transform: uppercase; 
+            color: var(--fg);
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 0.6rem 1.2rem;
+            border-radius: 100px;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        
+        .skill-pill:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--accent);
+            color: var(--accent);
+            box-shadow: 0 0 15px rgba(0, 255, 163, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .pill-icon { width: 6px; height: 6px; border-radius: 50%; background: var(--dim); box-shadow: 0 0 5px currentColor; }
+        .skill-pill:hover .pill-icon { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
 
         /* --- STACK SECTION --- */
         .stack-section { background: rgba(10,10,15,0.8); backdrop-filter: blur(20px); }
@@ -186,13 +233,8 @@
             gap: 1.2rem; 
         }
 
-        /* Responsive Grid for Phones/Tablets */
         @media (max-width: 900px) {
-            .stack-grid {
-                /* Force 2 columns */
-                grid-template-columns: 1fr 1fr;
-                gap: 0.8rem;
-            }
+            .stack-grid { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
         }
 
         .stack-card { 
@@ -206,10 +248,7 @@
             backdrop-filter: blur(10px); 
         }
         
-        /* Adjust stack card padding for small 2-column layout */
-        @media (max-width: 900px) {
-            .stack-card { padding: 1rem; }
-        }
+        @media (max-width: 900px) { .stack-card { padding: 1rem; } }
 
         .stack-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at top left, rgba(0,255,163,.08), transparent 70%); opacity: 0; transition: opacity .4s; }
         .stack-card:hover::before { opacity: 1; }
@@ -218,27 +257,14 @@
         .stack-title { font-size: clamp(.8rem,1.5vw,1.1rem); font-weight: 700; margin-bottom: .5rem; letter-spacing: .04em; }
         .stack-desc { font-size: clamp(.65rem,.9vw,.82rem); color: var(--dim); line-height: 1.7; }
         
-        /* Hide description on very small screens if it gets too cluttered in 2 columns */
-        @media (max-width: 400px) {
-            .stack-desc { display: none; }
-        }
+        @media (max-width: 400px) { .stack-desc { display: none; } }
 
         .stack-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem; }
         .stag { font-family: 'Space Mono', monospace; font-size: .55rem; letter-spacing: .1em; padding: .25rem .5rem; border: 1px solid var(--border); color: var(--dim); text-transform: uppercase; }
 
-        /* ========================================= */
-        /* === PROJECTS SECTION (Stacking Cards) === */
-        /* ========================================= */
-        
-        .projects-section {
-            padding: 0;
-            padding-top: 4rem;
-        }
-
-        .stack-area {
-            width: 100%; max-width: 1600px; margin: 0 auto; 
-            padding-bottom: 20vh;
-        }
+        /* --- PROJECTS SECTION --- */
+        .projects-section { padding: 0; padding-top: 4rem; }
+        .stack-area { width: 100%; max-width: 1600px; margin: 0 auto; padding-bottom: 20vh; }
 
         .card {
             position: sticky;
@@ -251,7 +277,6 @@
             cursor: none; 
         }
 
-        /* Stacking offsets for up to 6 cards */
         .card:nth-child(1) { top: var(--stack-start); }
         .card:nth-child(2) { top: calc(var(--stack-start) + var(--tab-height)); }
         .card:nth-child(3) { top: calc(var(--stack-start) + (var(--tab-height) * 2)); }
@@ -268,61 +293,18 @@
             z-index: 10;
         }
         
-        /* Left side wrapper for Icon + Number */
         .header-left { display: flex; align-items: center; gap: 0.8rem; }
-        
         .idx { font-family: 'Space Mono', monospace; color: var(--dim); font-size: 0.8rem; }
-        
-        .mini-title { 
-            font-family: 'Manrope', sans-serif; font-weight: 600; 
-            text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.75rem; 
-            color: var(--fg);
-        }
-        
-        .platform-icon {
-            width: 18px; height: 18px; color: var(--accent); opacity: 0.8;
-            stroke-width: 1.5;
-        }
+        .mini-title { font-family: 'Manrope', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.75rem; color: var(--fg); }
+        .platform-icon { width: 18px; height: 18px; color: var(--accent); opacity: 0.8; stroke-width: 1.5; }
 
-        .card-body {
-            flex: 1;
-            display: grid; grid-template-columns: 1fr 1.2fr;
-            height: 100%;
-        }
-
-        .card-content {
-            padding: 4vw;
-            display: flex; flex-direction: column; justify-content: center;
-            position: relative;
-            border-right: 1px solid var(--border);
-        }
-
-        .bg-number {
-            position: absolute; top: 2rem; left: 2rem;
-            font-family: 'Syncopate', sans-serif;
-            font-size: clamp(4rem, 15vw, 12rem);
-            color: rgba(255,255,255,0.02);
-            line-height: 1; pointer-events: none;
-        }
-
+        .card-body { flex: 1; display: grid; grid-template-columns: 1fr 1.2fr; height: 100%; }
+        .card-content { padding: 4vw; display: flex; flex-direction: column; justify-content: center; position: relative; border-right: 1px solid var(--border); }
+        .bg-number { position: absolute; top: 2rem; left: 2rem; font-family: 'Syncopate', sans-serif; font-size: clamp(4rem, 15vw, 12rem); color: rgba(255,255,255,0.02); line-height: 1; pointer-events: none; }
         .project-meta { position: relative; z-index: 1; }
-        
-        .project-title { 
-            font-family: 'Syne', sans-serif; 
-            font-size: clamp(2rem, 5vw, 4.5rem);
-            font-weight: 700; line-height: 1.1; margin-bottom: 1rem; color: #fff; 
-        }
-        
-        .project-desc { 
-            font-family: 'Manrope', sans-serif;
-            font-size: clamp(0.9rem, 1.2vw, 1.15rem); 
-            color: var(--dim); line-height: 1.6; max-width: 500px; margin-bottom: 2rem; 
-        }
-        
-        .tech-stack { 
-            font-family: 'Space Mono', monospace; font-size: 0.7rem; 
-            color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2rem; 
-        }
+        .project-title { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 4.5rem); font-weight: 700; line-height: 1.1; margin-bottom: 1rem; color: #fff; }
+        .project-desc { font-family: 'Manrope', sans-serif; font-size: clamp(0.9rem, 1.2vw, 1.15rem); color: var(--dim); line-height: 1.6; max-width: 500px; margin-bottom: 2rem; }
+        .tech-stack { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2rem; }
         
         .btn-link {
             font-family: 'Manrope', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem;
@@ -332,11 +314,7 @@
         .btn-link:hover { color: var(--accent); border-color: var(--accent); }
 
         .card-visual { position: relative; overflow: hidden; background: #000; }
-        .card-visual img {
-            width: 100%; height: 100%; object-fit: cover;
-            filter: grayscale(100%) contrast(1.1);
-            transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1), filter 0.5s ease;
-        }
+        .card-visual img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%) contrast(1.1); transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1), filter 0.5s ease; }
         .card:hover .card-visual img { filter: grayscale(0%) contrast(1); transform: scale(1.03); }
 
         @media (max-width: 900px) {
@@ -360,8 +338,14 @@
         .footer-accent { color: var(--accent); }
 
         @media(max-width:480px) and (orientation:portrait){
-            /* Updated to keep descriptions in Hero but maybe hide elsewhere */
             .stack-tags .stag { font-size: .55rem; }
+        }
+
+        /* --- MOBILE / TOUCH OPTIMIZATION --- */
+        @media (hover: none) and (pointer: coarse) {
+            body, .card, .btn, .stack-card, .nav-links a, .btn-link, .soc-btn { cursor: auto !important; }
+            .cursor-element { display: none !important; }
+            .mouse-indicator { opacity: 0.5 !important; }
         }
     </style>
 </head>
@@ -375,6 +359,10 @@
 <div class="grid-overlay"></div>
 <div class="vignette"></div>
 <div class="noise"></div>
+
+<div class="brand-sticky-header">
+    <div class="brand-logo-text">BY <span>XRV LABS</span></div>
+</div>
 
 <div class="cursor-element cursor-glow" id="cursorGlow"></div>
 <div class="cursor-element cursor-ring" id="cursorRing"></div>
@@ -410,21 +398,42 @@
         </a>
 
     </div>
+    
     <div class="skills-marquee-wrapper">
         <div class="skills-marquee">
             <div class="skills-track">
-                <div class="skill-item"><span class="skill-dot" style="background:#f7df1e;color:#f7df1e;"></span><span>JavaScript</span></div><span class="skill-separator">✦</span>
-                <div class="skill-item"><span class="skill-dot" style="background:#3178c6;color:#3178c6;"></span><span>TypeScript</span></div><span class="skill-separator">✦</span>
-                <div class="skill-item"><span class="skill-dot" style="background:#7F52FF;color:#7F52FF;"></span><span>Kotlin</span></div><span class="skill-separator">✦</span>
-                <div class="skill-item"><span class="skill-dot" style="background:#512bd4;color:#512bd4;"></span><span>C# .NET</span></div><span class="skill-separator">✦</span>
-                <div class="skill-item"><span class="skill-dot" style="background:#61DAFB;color:#61DAFB;"></span><span>React</span></div><span class="skill-separator">✦</span>
+                <div class="skill-pill"><span class="pill-icon"></span>JavaScript</div>
+                <div class="skill-pill"><span class="pill-icon"></span>TypeScript</div>
+                <div class="skill-pill"><span class="pill-icon"></span>React</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Next.js</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Node.js</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Kotlin</div>
+                <div class="skill-pill"><span class="pill-icon"></span>C# .NET</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Python</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Go</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Docker</div>
+                <div class="skill-pill"><span class="pill-icon"></span>AWS</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Supabase</div>
+                <div class="skill-pill"><span class="pill-icon"></span>PostgreSQL</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Figma</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Tailwind</div>
             </div>
             <div class="skills-track">
-                <div class="skill-item"><span class="skill-dot" style="background:#f7df1e;color:#f7df1e;"></span><span>JavaScript</span></div><span class="skill-separator">✦</span>
-                <div class="skill-item"><span class="skill-dot" style="background:#3178c6;color:#3178c6;"></span><span>TypeScript</span></div><span class="skill-separator">✦</span>
-                <div class="skill-item"><span class="skill-dot" style="background:#7F52FF;color:#7F52FF;"></span><span>Kotlin</span></div><span class="skill-separator">✦</span>
-                <div class="skill-item"><span class="skill-dot" style="background:#512bd4;color:#512bd4;"></span><span>C# .NET</span></div><span class="skill-separator">✦</span>
-                <div class="skill-item"><span class="skill-dot" style="background:#61DAFB;color:#61DAFB;"></span><span>React</span></div><span class="skill-separator">✦</span>
+                <div class="skill-pill"><span class="pill-icon"></span>JavaScript</div>
+                <div class="skill-pill"><span class="pill-icon"></span>TypeScript</div>
+                <div class="skill-pill"><span class="pill-icon"></span>React</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Next.js</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Node.js</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Kotlin</div>
+                <div class="skill-pill"><span class="pill-icon"></span>C# .NET</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Python</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Go</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Docker</div>
+                <div class="skill-pill"><span class="pill-icon"></span>AWS</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Supabase</div>
+                <div class="skill-pill"><span class="pill-icon"></span>PostgreSQL</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Figma</div>
+                <div class="skill-pill"><span class="pill-icon"></span>Tailwind</div>
             </div>
         </div>
     </div>
@@ -723,6 +732,9 @@ const dot = new SmoothCursor(dotEl, new Spring({ stiffness: 0.25, damping: 0.7, 
 let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
 let isMouseOnPage = false, targetX = mouseX, targetY = mouseY;
 
+// Detect Touch Device for JS Logic
+const isTouchDevice = (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
+
 // Orbs parallax
 const orbs = document.querySelectorAll('.orb');
 const orbSprings = Array.from(orbs).map((orb, i) => ({
@@ -752,64 +764,104 @@ function updateMouseIndicator() {
 
 function getRestPosition() { return { x: window.innerWidth - 53, y: window.innerHeight - 61 }; }
 
+// Initial Setup
 const restPos = getRestPosition();
-[glow, ring, dot].forEach(c => c.setPosition(restPos.x, restPos.y));
-targetX = restPos.x; targetY = restPos.y;
-glowEl.classList.add('resting'); ringEl.classList.add('resting'); dotEl.classList.add('resting');
+if (!isTouchDevice) {
+    [glow, ring, dot].forEach(c => c.setPosition(restPos.x, restPos.y));
+    targetX = restPos.x; targetY = restPos.y;
+    glowEl.classList.add('resting'); ringEl.classList.add('resting'); dotEl.classList.add('resting');
+}
 updateMouseIndicator(); mouseIndicator.classList.add('visible');
 
 // Events
-document.addEventListener('mousemove', e => {
-    mouseX = e.clientX; mouseY = e.clientY;
-    if (!isMouseOnPage) {
-        isMouseOnPage = true;
+if (!isTouchDevice) {
+    document.addEventListener('mousemove', e => {
+        mouseX = e.clientX; mouseY = e.clientY;
+        if (!isMouseOnPage) {
+            isMouseOnPage = true;
+            glowEl.classList.remove('resting'); ringEl.classList.remove('resting'); dotEl.classList.remove('resting');
+            mouseIndicator.classList.remove('visible');
+        }
+        targetX = mouseX; targetY = mouseY;
+    });
+
+    document.addEventListener('mouseenter', e => {
+        isMouseOnPage = true; mouseX = e.clientX; mouseY = e.clientY; targetX = mouseX; targetY = mouseY;
         glowEl.classList.remove('resting'); ringEl.classList.remove('resting'); dotEl.classList.remove('resting');
         mouseIndicator.classList.remove('visible');
-    }
-    targetX = mouseX; targetY = mouseY;
-});
+    });
 
-document.addEventListener('mouseenter', e => {
-    isMouseOnPage = true; mouseX = e.clientX; mouseY = e.clientY; targetX = mouseX; targetY = mouseY;
-    glowEl.classList.remove('resting'); ringEl.classList.remove('resting'); dotEl.classList.remove('resting');
-    mouseIndicator.classList.remove('visible');
-});
+    document.addEventListener('mouseleave', () => {
+        isMouseOnPage = false;
+        const rp = getRestPosition(); targetX = rp.x; targetY = rp.y;
+        glowEl.classList.add('resting'); ringEl.classList.add('resting'); dotEl.classList.add('resting');
+        updateMouseIndicator(); mouseIndicator.classList.add('visible');
+    });
 
-document.addEventListener('mouseleave', () => {
-    isMouseOnPage = false;
-    const rp = getRestPosition(); targetX = rp.x; targetY = rp.y;
-    glowEl.classList.add('resting'); ringEl.classList.add('resting'); dotEl.classList.add('resting');
-    updateMouseIndicator(); mouseIndicator.classList.add('visible');
-});
+    document.addEventListener('mousedown', () => { ringEl.classList.add('clicking'); dotEl.classList.add('clicking'); });
+    document.addEventListener('mouseup', () => { ringEl.classList.remove('clicking'); dotEl.classList.remove('clicking'); });
 
-window.addEventListener('scroll', () => { if (!isMouseOnPage) updateMouseIndicator(); });
+    document.querySelectorAll('a, button, .proj-card, .stack-card, .soc-btn, .btn, .skill-pill, .card, .btn-link').forEach(el => {
+        el.addEventListener('mouseenter', () => ringEl.classList.add('hover'));
+        el.addEventListener('mouseleave', () => ringEl.classList.remove('hover'));
+    });
+}
 
-document.addEventListener('mousedown', () => { ringEl.classList.add('clicking'); dotEl.classList.add('clicking'); });
-document.addEventListener('mouseup', () => { ringEl.classList.remove('clicking'); dotEl.classList.remove('clicking'); });
-
-document.querySelectorAll('a, button, .proj-card, .stack-card, .soc-btn, .btn, .skill-item, .card, .btn-link').forEach(el => {
-    el.addEventListener('mouseenter', () => ringEl.classList.add('hover'));
-    el.addEventListener('mouseleave', () => ringEl.classList.remove('hover'));
+// Window Events
+window.addEventListener('scroll', () => { 
+    if (!isMouseOnPage && !isTouchDevice) updateMouseIndicator(); 
+    
+    // Check nav visibility logic
+    handleNavVisibility();
+    handleStickyHeader();
 });
 
 window.addEventListener('resize', () => {
-    if (!isMouseOnPage) { const rp = getRestPosition(); targetX = rp.x; targetY = rp.y; }
+    if (!isMouseOnPage && !isTouchDevice) { const rp = getRestPosition(); targetX = rp.x; targetY = rp.y; }
 });
+
+// --- NEW NAV & HEADER LOGIC ---
+const mainNav = document.querySelector('nav');
+const brandHeader = document.querySelector('.brand-sticky-header');
+const projectSection = document.querySelector('.projects-section');
+
+// 1. Hide Main Nav on Scroll Down
+function handleNavVisibility() {
+    const threshold = 50; // Scroll down 50px to hide
+    if (window.scrollY > threshold) {
+        mainNav.classList.add('nav-hidden');
+    } else {
+        mainNav.classList.remove('nav-hidden');
+    }
+}
+
+// 2. Show Sticky Header at Projects Section
+function handleStickyHeader() {
+    if (!projectSection) return;
+    const rect = projectSection.getBoundingClientRect();
+    // Trigger when top of projects is near 20% of viewport
+    if (rect.top <= window.innerHeight * 0.2) {
+        brandHeader.classList.add('visible');
+    } else {
+        brandHeader.classList.remove('visible');
+    }
+}
 
 // Animation
 function animate() {
-    glow.setTarget(targetX, targetY); ring.setTarget(targetX, targetY); dot.setTarget(targetX, targetY);
-    glow.update(); ring.update(); dot.update();
-    
-    // Orbs parallax
-    const cx = (targetX / window.innerWidth) - 0.5;
-    const cy = (targetY / window.innerHeight) - 0.5;
-    orbSprings.forEach(orb => {
-        orb.spring.setTarget(cx * orb.strength, cy * orb.strength);
-        orb.spring.update();
-        orb.el.style.transform = `translate(${orb.spring.x}px, ${orb.spring.y}px)`;
-    });
-    
+    if (!isTouchDevice) {
+        glow.setTarget(targetX, targetY); ring.setTarget(targetX, targetY); dot.setTarget(targetX, targetY);
+        glow.update(); ring.update(); dot.update();
+        
+        // Orbs parallax
+        const cx = (targetX / window.innerWidth) - 0.5;
+        const cy = (targetY / window.innerHeight) - 0.5;
+        orbSprings.forEach(orb => {
+            orb.spring.setTarget(cx * orb.strength, cy * orb.strength);
+            orb.spring.update();
+            orb.el.style.transform = `translate(${orb.spring.x}px, ${orb.spring.y}px)`;
+        });
+    }
     requestAnimationFrame(animate);
 }
 requestAnimationFrame(animate);
@@ -830,15 +882,17 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 });
 
 // Magnetic nav
-document.querySelectorAll('.nav-links a').forEach(link => {
-    link.addEventListener('mousemove', e => {
-        const rect = link.getBoundingClientRect();
-        const x = e.clientX - rect.left - rect.width / 2;
-        const y = e.clientY - rect.top - rect.height / 2;
-        link.style.transform = `translate(${x * 0.4}px, ${y * 0.4}px)`;
+if (!isTouchDevice) {
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('mousemove', e => {
+            const rect = link.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            link.style.transform = `translate(${x * 0.4}px, ${y * 0.4}px)`;
+        });
+        link.addEventListener('mouseleave', () => { link.style.transform = 'translate(0, 0)'; });
     });
-    link.addEventListener('mouseleave', () => { link.style.transform = 'translate(0, 0)'; });
-});
+}
 </script>
 </body>
 </html>
