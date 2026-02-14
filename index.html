@@ -16,7 +16,7 @@
             --border: rgba(255,255,255,0.06);
 
             /* CONFIG */
-            --stack-start: 10vh;   /* The gap at the top where cards stick */
+            --stack-start: 10vh;   /* Top gap for cards */
             --tab-height: 60px;    /* Height of the visible card strip */
         }
 
@@ -40,41 +40,27 @@
             overflow-x: hidden;
         }
 
-        /* --- THE SLIDING BRAND HEADER --- */
+        /* --- SLIDING HEADER --- */
         .brand-sticky-header {
-            position: fixed;
-            top: 0; left: 0; width: 100%;
-            height: var(--stack-start); /* Matches the gap exactly */
-            background: rgba(5, 5, 5, 0.8); /* Semi-transparent */
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            position: fixed; top: 0; left: 0; width: 100%;
+            height: var(--stack-start);
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid var(--border);
-            z-index: 100; /* Above cards */
-            
+            z-index: 100;
             display: flex; align-items: center; justify-content: center;
-            
-            /* Hidden initially */
             transform: translateY(-100%);
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
-        /* The class JS will add to slide it down */
-        .brand-sticky-header.visible {
-            transform: translateY(0);
-        }
-
+        .brand-sticky-header.visible { transform: translateY(0); }
         .brand-logo-text {
-            font-family: 'Syncopate', sans-serif;
-            font-weight: 700;
-            font-size: 1.2rem;
-            letter-spacing: 0.1em;
-            color: #fff;
-            text-transform: uppercase;
+            font-family: 'Syncopate', sans-serif; font-weight: 700;
+            font-size: 1.1rem; letter-spacing: 0.1em; color: #fff; text-transform: uppercase;
         }
 
-        /* --- MAIN HERO --- */
+        /* --- HERO SECTION --- */
         header {
-            min-height: 80vh; /* Taller hero to allow scroll distance */
+            min-height: 80vh;
             padding: 0 8vw;
             display: flex; flex-direction: column; justify-content: center;
         }
@@ -86,21 +72,25 @@
             margin-bottom: 1.5rem;
         }
 
+        /* BIG HEADLINE: "SELECTED WORK"
+           Desktop: Huge (7rem)
+           Tablet: Medium
+           Phone: Small (2.5rem) to fit screen width
+        */
         h1 {
             font-family: 'Syncopate', sans-serif;
-            font-size: clamp(3rem, 10vw, 7rem);
-            line-height: 0.9;
+            /* clamp(MIN, PREFERRED, MAX) */
+            font-size: clamp(2.2rem, 9vw, 7rem); 
+            line-height: 1;
             text-transform: uppercase;
             color: #fff;
             margin-bottom: 2rem;
+            letter-spacing: -0.02em;
         }
 
         /* --- STACK SECTION --- */
         .stack-area {
-            width: 100%;
-            max-width: 1600px;
-            margin: 0 auto;
-            padding-bottom: 20vh;
+            width: 100%; max-width: 1600px; margin: 0 auto; padding-bottom: 20vh;
         }
 
         .card {
@@ -113,7 +103,6 @@
             box-shadow: 0 -20px 60px rgba(0,0,0,0.8);
         }
 
-        /* Stacking Logic */
         .card:nth-child(1) { top: var(--stack-start); }
         .card:nth-child(2) { top: calc(var(--stack-start) + var(--tab-height)); }
         .card:nth-child(3) { top: calc(var(--stack-start) + (var(--tab-height) * 2)); }
@@ -122,7 +111,7 @@
         .card-header {
             height: var(--tab-height); min-height: var(--tab-height);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 3vw;
+            padding: 0 5vw; /* More padding on mobile */
             background: var(--card-bg);
             border-bottom: 1px solid var(--border);
             z-index: 10;
@@ -134,7 +123,7 @@
             text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.75rem; 
         }
 
-        /* --- CARD INNER CONTENT --- */
+        /* --- CARD CONTENT --- */
         .card-body {
             flex: 1;
             display: grid; grid-template-columns: 1fr 1.2fr;
@@ -148,18 +137,32 @@
             border-right: 1px solid var(--border);
         }
 
+        /* Background Number: 01, 02... */
         .bg-number {
             position: absolute; top: 2rem; left: 2rem;
             font-family: 'Syncopate', sans-serif;
-            font-size: clamp(6rem, 15vw, 12rem);
+            font-size: clamp(4rem, 15vw, 12rem); /* Auto-shrink on mobile */
             color: rgba(255,255,255,0.02);
             line-height: 1; pointer-events: none;
         }
 
         .project-meta { position: relative; z-index: 1; }
-        .project-title { font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 300; line-height: 1.1; margin-bottom: 1.5rem; color: #fff; }
-        .project-desc { font-size: clamp(1rem, 1.2vw, 1.15rem); color: var(--dim); line-height: 1.7; max-width: 500px; margin-bottom: 2.5rem; }
-        .tech-stack { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3rem; }
+        
+        /* Project Titles inside cards */
+        .project-title { 
+            font-size: clamp(2rem, 5vw, 4.5rem); /* Smaller min-size for phones */
+            font-weight: 300; line-height: 1.1; margin-bottom: 1rem; color: #fff; 
+        }
+        
+        .project-desc { 
+            font-size: clamp(0.9rem, 1.2vw, 1.15rem); 
+            color: var(--dim); line-height: 1.6; max-width: 500px; margin-bottom: 2rem; 
+        }
+        
+        .tech-stack { 
+            font-family: 'Space Mono', monospace; font-size: 0.7rem; 
+            color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2rem; 
+        }
         
         .btn-link {
             font-family: 'Manrope', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem;
@@ -174,12 +177,18 @@
         }
         .card:hover .card-visual img { filter: grayscale(0%) contrast(1); transform: scale(1.03); }
 
-        /* Mobile Responsive */
-        @media (max-width: 1024px) {
+        /* --- MOBILE LAYOUT OVERRIDES --- */
+        @media (max-width: 900px) {
             .card-body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-            .card-content { border-right: none; border-bottom: 1px solid var(--border); padding: 2rem 1.5rem; }
-            .bg-number { font-size: 8rem; top: 1rem; left: 1rem; }
-            .card-visual img { filter: grayscale(0%); }
+            .card-content { border-right: none; border-bottom: 1px solid var(--border); padding: 2.5rem 1.5rem; }
+            
+            /* Adjust massive number for mobile */
+            .bg-number { font-size: 5rem; top: 1rem; left: 1rem; opacity: 0.04; }
+            
+            .card-visual img { filter: grayscale(0%); } /* Always color on mobile */
+            
+            /* Reduce header padding on mobile */
+            header { padding: 0 1.5rem; }
         }
     </style>
 </head>
@@ -192,7 +201,7 @@
     <header>
         <div class="brand-static">Akshar / Dev</div>
         <h1>Selected<br>Works</h1>
-        <p style="color:var(--dim); font-family:'Space Mono'; font-size:0.8rem; margin-top:1rem;">↓ SCROLL TO STACK</p>
+        <p style="color:var(--dim); font-family:'Space Mono'; font-size:0.75rem; margin-top:0.5rem;">↓ SCROLL TO EXPLORE</p>
     </header>
 
     <div class="stack-area">
@@ -267,29 +276,19 @@
     </div>
 
     <script>
-        // --- LOGIC FOR SLIDING HEADER ---
         const brandHeader = document.querySelector('.brand-sticky-header');
         const stackArea = document.querySelector('.stack-area');
         
         function handleScroll() {
-            // Calculate where the stack area starts relative to viewport
             const rect = stackArea.getBoundingClientRect();
-            
-            // The cards stick at 10vh. 
-            // We want the header to appear when the stack area's top hits that 10vh mark.
-            // 10vh in pixels:
             const triggerPoint = window.innerHeight * 0.10;
-
-            // If the top of the stack area is at or above the trigger point
             if (rect.top <= triggerPoint) {
                 brandHeader.classList.add('visible');
             } else {
                 brandHeader.classList.remove('visible');
             }
         }
-
         window.addEventListener('scroll', handleScroll);
-        // Run once on load in case user reloads in middle of page
         handleScroll();
     </script>
 
