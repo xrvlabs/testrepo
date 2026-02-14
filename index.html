@@ -107,9 +107,9 @@
         /* Scroll Indicator - Redesigned */
         .scroll-indicator { 
             position: fixed; 
-            bottom: 40px; 
-            right: 40px; 
-            width: 50px; 
+            bottom: 50px; 
+            right: 0px; 
+            width: 40px; 
             height: 80px; 
             pointer-events: none; 
             z-index: 9998; 
@@ -149,7 +149,7 @@
         
         .scroll-text {
             font-family: 'Space Mono', monospace;
-            font-size: 0.5rem;
+            font-size: 0.6rem;
             letter-spacing: 0.15em;
             text-transform: uppercase;
             color: var(--dim);
@@ -970,176 +970,172 @@
 
     <div class="stack-area">
 
-        <div class="card reveal">
+    <div class="card reveal">
+        <div class="card-header">
+            <div class="header-left">
+                <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+                <span class="idx">#01</span>
+            </div>
+            <span class="mini-title">Cloud Editor</span>
+        </div>
+        <div class="card-body">
+            <div class="card-content">
+                <div class="bg-number">01</div>
+                <div class="project-meta">
+                    <h2 class="project-title">CodeMox Suite</h2>
+                    <div class="tech-stack">Firebase / JS / LZ-String</div>
+                    <p class="project-desc">A dual-mode cloud workspace featuring a multi-tab note manager and a live HTML/CSS/JS playground. Includes real-time sync, dark mode, and compressed data storage.</p>
+                    <a href="#" class="btn-link">Launch Editor</a>
+                </div>
+            </div>
+            <div class="card-visual">
+                <img src="https://images.unsplash.com/photo-1542831371-29b0f74f9713?q=80&w=1200&auto=format&fit=crop" alt="CodeMox Editor">
+            </div>
+        </div>
+    </div>
+
+    <div class="card reveal">
+        <div class="card-header">
+            <div class="header-left">
+                <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span class="idx">#02</span>
+            </div>
+            <span class="mini-title">Transfer Node</span>
+        </div>
+        <div class="card-body">
+            <div class="card-content">
+                <div class="bg-number">02</div>
+                <div class="project-meta">
+                    <h2 class="project-title">FileGo</h2>
+                    <div class="tech-stack">Cloudflare Workers / R2 / Realtime DB</div>
+                    <p class="project-desc">High-capacity file transfer system using a multi-node worker architecture. Supports 10GB files, auto-expiry, QR sharing, and real-time upload status monitoring.</p>
+                    <a href="#" class="btn-link">Send Files</a>
+                </div>
+            </div>
+            <div class="card-visual">
+                <img src="https://images.unsplash.com/photo-1629759325788-b2230b42c476?q=80&w=1200&auto=format&fit=crop" alt="File Transfer">
+            </div>
+        </div>
+    </div>
+
+    <div class="card reveal">
+        <div class="card-header">
+            <div class="header-left">
+                <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 4v6h-6"></path>
+                    <path d="M1 20v-6h6"></path>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+                <span class="idx">#03</span>
+            </div>
+            <span class="mini-title">Media Tool</span>
+        </div>
+        <div class="card-body">
+            <div class="card-content">
+                <div class="bg-number">03</div>
+                <div class="project-meta">
+                    <h2 class="project-title">Convertin</h2>
+                    <div class="tech-stack">Pica.js / Canvas API / Web Workers</div>
+                    <p class="project-desc">A privacy-first batch image processor that handles complex format conversions (AVIF, WEBP, ICO) entirely in the browser without server uploads.</p>
+                    <a href="#" class="btn-link">Convert Images</a>
+                </div>
+            </div>
+            <div class="card-visual">
+                <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1200&auto=format&fit=crop" alt="Image Converter">
+            </div>
+        </div>
+    </div>
+<div class="card reveal">
+        <div class="card-header">
+            <div class="header-left">
+                <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                    <path d="M12 11h4"></path>
+                    <path d="M12 16h4"></path>
+                    <path d="M8 11h.01"></path>
+                    <path d="M8 16h.01"></path>
+                </svg>
+                <span class="idx">#04</span>
+            </div>
+            <span class="mini-title">System Utility</span>
+        </div>
+        <div class="card-body">
+            <div class="card-content">
+                <div class="bg-number">04</div>
+                <div class="project-meta">
+                    <h2 class="project-title">ClipMox</h2>
+                    <div class="tech-stack">C# .NET / Supabase / WinUI 3</div>
+                    <p class="project-desc">A cloud-synced Windows clipboard manager. Features pinned history and secure hardware-ID (HWID) authentication, allowing seamless sync across devices without traditional logins.</p>
+                    <a href="#" class="btn-link">Download Installer</a>
+                </div>
+            </div>
+            <div class="card-visual">
+                <img src="https://images.unsplash.com/photo-1517430816045-df4b7de8db17?q=80&w=1200&auto=format&fit=crop" alt="Clipboard Software">
+            </div>
+        </div>
+    </div>
+<div class="card reveal">
             <div class="card-header">
                 <div class="header-left">
-                    <svg class="platform-icon" viewBox="0 0 24 24" fill="currentColor" style="fill-opacity:0.2; stroke:none;">
-                        <path d="M0 3.437v8.031l9.719-.063v-8.47zM10.812 2.656v8.781h10.53v-10.25zM0 12.594v8.031l9.719 1.375v-8.47zM10.812 12.562v8.813l10.53 1.469v-10.28z"/>
-                        <path fill="none" stroke="currentColor" stroke-width="1.5" d="M0 3.437v8.031l9.719-.063v-8.47zM10.812 2.656v8.781h10.53v-10.25zM0 12.594v8.031l9.719 1.375v-8.47zM10.812 12.562v8.813l10.53 1.469v-10.28z"/>
+                    <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                     </svg>
                     <span class="idx">#01</span>
                 </div>
-                <span class="mini-title">Task Planner</span>
+                <span class="mini-title">LibraryOS</span>
             </div>
             <div class="card-body">
                 <div class="card-content">
                     <div class="bg-number">01</div>
                     <div class="project-meta">
-                        <h2 class="project-title">Desktop Workflow</h2>
-                        <div class="tech-stack">C# .NET / WPF / SQLite</div>
-                        <p class="project-desc">A robust Windows desktop application designed for deep work sessions with Kanban boards and encryption.</p>
-                        <a href="#" class="btn-link">Read Case Study</a>
+                        <h2 class="project-title">Librain</h2>
+                        <div class="tech-stack">React / Node.js / MongoDB</div>
+                        <p class="project-desc">A comprehensive library management system tracking daily attendance, vacant slots in real-time, and gamifying study streaks with monthly winner boards.</p>
+                        <a href="#" class="btn-link">View Dashboard</a>
                     </div>
                 </div>
                 <div class="card-visual">
-                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop" alt="Task App">
+                    <img src="https://images.unsplash.com/photo-1507842217121-9e93c8aaf27c?q=80&w=1200&auto=format&fit=crop" alt="Librain Dashboard">
                 </div>
             </div>
         </div>
-
-        <div class="card reveal">
-            <div class="card-header">
-                <div class="header-left">
-                    <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                    <span class="idx">#02</span>
-                </div>
-                <span class="mini-title">Inventory Sync</span>
+<div class="card reveal">
+        <div class="card-header">
+            <div class="header-left">
+                <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span class="idx">#05</span>
             </div>
-            <div class="card-body">
-                <div class="card-content">
-                    <div class="bg-number">02</div>
-                    <div class="project-meta">
-                        <h2 class="project-title">Retail Dashboard</h2>
-                        <div class="tech-stack">React / Supabase / Realtime</div>
-                        <p class="project-desc">Real-time stock management utilizing Websockets to sync inventory changes instantly across devices.</p>
-                        <a href="#" class="btn-link">View Demo</a>
-                    </div>
+            <span class="mini-title">AOD Utility</span>
+        </div>
+        <div class="card-body">
+            <div class="card-content">
+                <div class="bg-number">05</div>
+                <div class="project-meta">
+                    <h2 class="project-title">REMAIN</h2>
+                    <div class="tech-stack">Kotlin / Android 12 API / Weather API</div>
+                    <p class="project-desc">An aesthetic Always-On Display utility that visualizes the passage of time. Features a "Year in Pixels" dot matrix, percentage countdowns, and live weather integration directly on the lockscreen.</p>
+                    <a href="#" class="btn-link">View on Play Store</a>
                 </div>
-                <div class="card-visual">
-                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1200&auto=format&fit=crop" alt="Dashboard">
-                </div>
+            </div>
+            <div class="card-visual">
+                <img src="https://images.unsplash.com/photo-1550523126-7798363a2408?q=80&w=1200&auto=format&fit=crop" alt="Always On Display App">
             </div>
         </div>
-
-        <div class="card reveal">
-            <div class="card-header">
-                <div class="header-left">
-                    <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M16.5 7.5L19 4"></path>
-                        <path d="M7.5 7.5L5 4"></path>
-                        <rect x="4" y="8" width="16" height="12" rx="4"></rect>
-                        <line x1="9" y1="12" x2="9.01" y2="12" stroke-width="3"></line>
-                        <line x1="15" y1="12" x2="15.01" y2="12" stroke-width="3"></line>
-                    </svg>
-                    <span class="idx">#03</span>
-                </div>
-                <span class="mini-title">Notes Native</span>
-            </div>
-            <div class="card-body">
-                <div class="card-content">
-                    <div class="bg-number">03</div>
-                    <div class="project-meta">
-                        <h2 class="project-title">Offline First</h2>
-                        <div class="tech-stack">Kotlin / Jetpack / Room</div>
-                        <p class="project-desc">Native Android app that writes locally for zero latency and syncs silently when connectivity restores.</p>
-                        <a href="#" class="btn-link">Download APK</a>
-                    </div>
-                </div>
-                <div class="card-visual">
-                    <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?q=80&w=1200&auto=format&fit=crop" alt="Mobile App">
-                </div>
-            </div>
-        </div>
-
-        <div class="card reveal">
-            <div class="card-header">
-                <div class="header-left">
-                    <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                    <span class="idx">#04</span>
-                </div>
-                <span class="mini-title">AI Analytics</span>
-            </div>
-            <div class="card-body">
-                <div class="card-content">
-                    <div class="bg-number">04</div>
-                    <div class="project-meta">
-                        <h2 class="project-title">Data Vision</h2>
-                        <div class="tech-stack">Python / TensorFlow / React</div>
-                        <p class="project-desc">A SaaS platform that processes unstructured data into visual insights using custom machine learning models.</p>
-                        <a href="#" class="btn-link">Live Preview</a>
-                    </div>
-                </div>
-                <div class="card-visual">
-                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop" alt="AI Analytics">
-                </div>
-            </div>
-        </div>
-
-        <div class="card reveal">
-            <div class="card-header">
-                <div class="header-left">
-                    <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                    <span class="idx">#05</span>
-                </div>
-                <span class="mini-title">E-Commerce</span>
-            </div>
-            <div class="card-body">
-                <div class="card-content">
-                    <div class="bg-number">05</div>
-                    <div class="project-meta">
-                        <h2 class="project-title">Neon Market</h2>
-                        <div class="tech-stack">Next.js / Stripe / Tailwind</div>
-                        <p class="project-desc">A high-performance headless e-commerce storefront featuring 3D product previews and instant checkout.</p>
-                        <a href="#" class="btn-link">View Shop</a>
-                    </div>
-                </div>
-                <div class="card-visual">
-                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?q=80&w=1200&auto=format&fit=crop" alt="E-Commerce">
-                </div>
-            </div>
-        </div>
-
-        <div class="card reveal">
-            <div class="card-header">
-                <div class="header-left">
-                    <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="2" y1="12" x2="22" y2="12"></line>
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
-                    </svg>
-                    <span class="idx">#06</span>
-                </div>
-                <span class="mini-title">Social Hub</span>
-            </div>
-            <div class="card-body">
-                <div class="card-content">
-                    <div class="bg-number">06</div>
-                    <div class="project-meta">
-                        <h2 class="project-title">Nexus Chat</h2>
-                        <div class="tech-stack">Socket.io / Redis / Node</div>
-                        <p class="project-desc">A lightweight, privacy-focused messaging platform capable of handling 10k+ concurrent connections.</p>
-                        <a href="#" class="btn-link">Join Beta</a>
-                    </div>
-                </div>
-                <div class="card-visual">
-                    <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1200&auto=format&fit=crop" alt="Social App">
-                </div>
-            </div>
-        </div>
-
     </div>
+
+</div>
 </section>
 
 <section class="contact-section" id="contact">
@@ -1237,31 +1233,55 @@ if (!isTouchDevice()) {
     targetX = restPos.x; targetY = restPos.y;
     glowEl.classList.add('resting'); ringEl.classList.add('resting'); dotEl.classList.add('resting');
     scrollIndicator.classList.add('visible');
+// Events
+    let scrollTimeout; // Variable to track the timer
 
-    // Events
     document.addEventListener('mousemove', e => {
         mouseX = e.clientX; mouseY = e.clientY;
+        
+        // If mouse returns to page, clear any hide timer and hide indicator immediately
         if (!isMouseOnPage) {
             isMouseOnPage = true;
-            glowEl.classList.remove('resting'); ringEl.classList.remove('resting'); dotEl.classList.remove('resting');
+            if (scrollTimeout) clearTimeout(scrollTimeout);
+            
+            glowEl.classList.remove('resting'); 
+            ringEl.classList.remove('resting'); 
+            dotEl.classList.remove('resting');
             scrollIndicator.classList.remove('visible');
         }
         targetX = mouseX; targetY = mouseY;
     });
 
     document.addEventListener('mouseenter', e => {
-        isMouseOnPage = true; mouseX = e.clientX; mouseY = e.clientY; targetX = mouseX; targetY = mouseY;
-        glowEl.classList.remove('resting'); ringEl.classList.remove('resting'); dotEl.classList.remove('resting');
+        isMouseOnPage = true; 
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+
+        mouseX = e.clientX; mouseY = e.clientY; targetX = mouseX; targetY = mouseY;
+        glowEl.classList.remove('resting'); 
+        ringEl.classList.remove('resting'); 
+        dotEl.classList.remove('resting');
         scrollIndicator.classList.remove('visible');
     });
 
     document.addEventListener('mouseleave', () => {
         isMouseOnPage = false;
         const rp = getRestPosition(); targetX = rp.x; targetY = rp.y;
-        glowEl.classList.add('resting'); ringEl.classList.add('resting'); dotEl.classList.add('resting');
+        
+        glowEl.classList.add('resting'); 
+        ringEl.classList.add('resting'); 
+        dotEl.classList.add('resting');
+        
+        // Show indicator
         scrollIndicator.classList.add('visible');
-    });
 
+        // Hide it after 2 seconds
+        if (scrollTimeout) clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            if (!isMouseOnPage) {
+                scrollIndicator.classList.remove('visible');
+            }
+        }, 2000);
+    });
     document.addEventListener('mousedown', () => { ringEl.classList.add('clicking'); dotEl.classList.add('clicking'); });
     document.addEventListener('mouseup', () => { ringEl.classList.remove('clicking'); dotEl.classList.remove('clicking'); });
 
