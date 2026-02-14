@@ -985,7 +985,7 @@
             <div class="card-content">
                 <div class="bg-number">01</div>
                 <div class="project-meta">
-                    <h2 class="project-title">CodeMox Suite</h2>
+                    <h2 class="project-title">CodeMox</h2>
                     <div class="tech-stack">Firebase / JS / LZ-String</div>
                     <p class="project-desc">A dual-mode cloud workspace featuring a multi-tab note manager and a live HTML/CSS/JS playground. Includes real-time sync, dark mode, and compressed data storage.</p>
                     <a href="#" class="btn-link">Launch Editor</a>
@@ -1089,13 +1089,13 @@
                         <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
                     </svg>
-                    <span class="idx">#01</span>
+                    <span class="idx">#05</span>
                 </div>
                 <span class="mini-title">LibraryOS</span>
             </div>
             <div class="card-body">
                 <div class="card-content">
-                    <div class="bg-number">01</div>
+                    <div class="bg-number">05</div>
                     <div class="project-meta">
                         <h2 class="project-title">Librain</h2>
                         <div class="tech-stack">React / Node.js / MongoDB</div>
@@ -1115,13 +1115,13 @@
                     <circle cx="12" cy="12" r="10"></circle>
                     <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                <span class="idx">#05</span>
+                <span class="idx">#06</span>
             </div>
             <span class="mini-title">AOD Utility</span>
         </div>
         <div class="card-body">
             <div class="card-content">
-                <div class="bg-number">05</div>
+                <div class="bg-number">06</div>
                 <div class="project-meta">
                     <h2 class="project-title">REMAIN</h2>
                     <div class="tech-stack">Kotlin / Android 12 API / Weather API</div>
@@ -1131,6 +1131,34 @@
             </div>
             <div class="card-visual">
                 <img src="https://images.unsplash.com/photo-1550523126-7798363a2408?q=80&w=1200&auto=format&fit=crop" alt="Always On Display App">
+            </div>
+        </div>
+    </div>
+<div class="card reveal">
+        <div class="card-header">
+            <div class="header-left">
+                <svg class="platform-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 19l7-7 3 3-7 7-3-3z"></path>
+                    <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"></path>
+                    <path d="M2 2l7.586 7.586"></path>
+                    <circle cx="11" cy="11" r="2"></circle>
+                </svg>
+                <span class="idx">#07</span>
+            </div>
+            <span class="mini-title">EdTech Platform</span>
+        </div>
+        <div class="card-body">
+            <div class="card-content">
+                <div class="bg-number">07</div>
+                <div class="project-meta">
+                    <h2 class="project-title">PrepSteno</h2>
+                    <div class="tech-stack">Kotlin / React / Node.js</div>
+                    <p class="project-desc">A comprehensive coaching ecosystem for English & Hindi stenography. Connects students with live classes, dictated audio coursework, and progress tracking across Web and Android.</p>
+                    <a href="#" class="btn-link">Start Learning</a>
+                </div>
+            </div>
+            <div class="card-visual">
+                <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=1200&auto=format&fit=crop" alt="Shorthand Education Platform">
             </div>
         </div>
     </div>
@@ -1234,20 +1262,28 @@ if (!isTouchDevice()) {
     glowEl.classList.add('resting'); ringEl.classList.add('resting'); dotEl.classList.add('resting');
     scrollIndicator.classList.add('visible');
 // Events
-    let scrollTimeout; // Variable to track the timer
+    let scrollTimeout;
+
+    // Ensure indicator is visible by default when page loads
+    scrollIndicator.classList.add('visible');
 
     document.addEventListener('mousemove', e => {
         mouseX = e.clientX; mouseY = e.clientY;
         
-        // If mouse returns to page, clear any hide timer and hide indicator immediately
+        // When mouse moves or returns to page
         if (!isMouseOnPage) {
             isMouseOnPage = true;
+            
+            // Cancel any pending hide timer immediately
             if (scrollTimeout) clearTimeout(scrollTimeout);
             
+            // Wake up the cursor
             glowEl.classList.remove('resting'); 
             ringEl.classList.remove('resting'); 
             dotEl.classList.remove('resting');
-            scrollIndicator.classList.remove('visible');
+            
+            // LOGIC CHANGE: Keep indicator visible while mouse is here
+            scrollIndicator.classList.add('visible');
         }
         targetX = mouseX; targetY = mouseY;
     });
@@ -1257,10 +1293,13 @@ if (!isTouchDevice()) {
         if (scrollTimeout) clearTimeout(scrollTimeout);
 
         mouseX = e.clientX; mouseY = e.clientY; targetX = mouseX; targetY = mouseY;
+        
         glowEl.classList.remove('resting'); 
         ringEl.classList.remove('resting'); 
         dotEl.classList.remove('resting');
-        scrollIndicator.classList.remove('visible');
+        
+        // LOGIC CHANGE: Ensure it shows up when entering
+        scrollIndicator.classList.add('visible');
     });
 
     document.addEventListener('mouseleave', () => {
@@ -1271,12 +1310,10 @@ if (!isTouchDevice()) {
         ringEl.classList.add('resting'); 
         dotEl.classList.add('resting');
         
-        // Show indicator
-        scrollIndicator.classList.add('visible');
-
-        // Hide it after 2 seconds
+        // LOGIC CHANGE: Wait 2 seconds, then hide the indicator
         if (scrollTimeout) clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
+            // Only hide if the mouse is still off the page
             if (!isMouseOnPage) {
                 scrollIndicator.classList.remove('visible');
             }
